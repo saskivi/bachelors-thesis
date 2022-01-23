@@ -14,11 +14,7 @@
 % Kieli- ja tavutuspaketit:
 \usepackage[english,swedish,finnish]{babel}
 % Kurssin omat asetukset aaltosci_t.sty:
-\usepackage{aaltosci_t}
-% Jos kirjoitat muulla kuin suomen kielellä valitse:
-%\usepackage[finnish]{aaltosci_t}           
-%\usepackage[swedish]{aaltosci_t}           
-%\usepackage[english]{aaltosci_t}           
+\usepackage[english]{aaltosci_t}
 % Muita paketteja:
 \usepackage{alltt}
 \usepackage{amsmath}   % matematiikkaa
@@ -70,9 +66,7 @@
 % Kielesi, jolla kandidaatintyön kirjoitat: finnish, swedish, english.
 % Tästä tulee mm. tietyt otsikkonimet ja kuva- ja taulukkoteksteihin 
 % (Kuva, Figur, Figure), (Taulukko, Tabell, Table) sekä oikea tavutus.
-\selectlanguage{finnish}
-%\selectlanguage{swedish}
-%\selectlanguage{english}
+\selectlanguage{english}
 
 % Sivunumeroinnin kanssa pieniä ristiriitaisuuksia.
 % Toimitaan pääosin lähteen "Kirjoitusopas" luvun 5.2.2 mukaisesti.
@@ -99,7 +93,7 @@
 %
 % "\MUUTTUJA"-kohdat luetaan aaltosci_t.sty:ä varten.
 
-\author{Teemu Teekkari}
+\author{Saskia Kivistö}
 
 % Otsikko nimiölehdelle. Yleensä sama kuin seuraavana oleva \TITLE, 
 % mutta jos nimiölehdellä tarvetta "kaksiosaiselle" kaksiriviselle
@@ -119,30 +113,17 @@ line which continues ynd continues}
 %\TITLE{\LaTeX{}-pohja kandidaatintyölle. Pitkiä rivejä kokeilun vuoksi.}
 
 % Ohjaajan laitos suomi/ruotsi ja tarvittaessa eng (tiivistelmän kieli/kielet)
-\DEPT{Poimi tähän ohjaajasi laitos, DEPT, main.tex}
-% suomi:
-%\DEPT{Tietotekniikan laitos}               % T
-%\DEPT{Tietojenkäsittelytieteen laitos}     % TKT
-%\DEPT{Mediatekniikan laitos}               % ME
-% ruotsi:
-%\DEPT{Institutionen för datateknik}        % T
-%\DEPT{Institutionen för datavetenskap}     % TKT
-%\DEPT{Institutionen för mediateknik}       % ME
-% englanti:
-%\ENDEPT{Department of Computer Science Engineering}     % T
-%\ENDEPT{Department of Information and Computer Science} % TKT
-%\ENDEPT{Department of Media Technology}                 % ME
+\DEPT{Tietotekniikan laitos}
+\ENDEPT{Department of Computer Science}
 
 % Vuosi ja päivämäärä, jolloin työ on jätetty tarkistettavaksi.
-\YEAR{20xx}
-\DATE{xx. xxxxxkuuta 20xx}
-%\DATE{31. helmikuuta 2011}
-%\DATE{Den 31 februari 2011}
-\ENDATE{MonthName 31, 20xx}
+\YEAR{2022}
+\DATE{17. huhtikuuta 2022}
+\ENDATE{April 17, 2022}
 
 % Kurssin vastuuopettaja ja työsi ohjaaja(t)
-\SUPERVISOR{Apulaisprofessori Juho Kannala}
-\INSTRUCTOR{Ohjaajantitteli Sinun Ohjaajasi}
+\SUPERVISOR{Apulaisprofessori Parinya Chalermsook}
+\INSTRUCTOR{DI Wanchote Jiamjitrak}
 %\INSTRUCTOR{Ohjaajantitteli Sinun Ohjaajasi, ToinenTitt Matti Meikäläinen}
 % DI       // på svenska DI diplomingenjör
 % TkL      // TkL teknologie licentiat
@@ -151,8 +132,8 @@ line which continues ynd continues}
 % Professori Prof. // Prof. Professor
 % 
 % Jos tiivistelmä englanniksi, niin:
-\ENSUPERVISOR{Assistant Professor Juho Kannala}
-\ENINSTRUCTOR{Your instructor, titleOfInstructor}
+\ENSUPERVISOR{Assistant Professor Parinya Chalermsook}
+\ENINSTRUCTOR{Wanchote Jiamjitrak, M.Sc. (Tech)}
 % M.Sc. (Tech)  // M.Sc. (Eng)
 % Lic.Sc. (Tech)
 % D.Sc. (Tech)   // FT filosofian tohtori, PhD Doctor of Philosophy
@@ -162,38 +143,9 @@ line which continues ynd continues}
 % Kirjoita tänne HOPS:ssa vahvistettu pääaineesi.
 % Pääainekoodit TIK-opinto-oppaasta.
 
-\PAAAINE{}
-%Tietotekniikka
-%Datateknik
-%Computer Science and Engineering
+\PAAAINE{Tietotekniikka}
+\ENPAAAINE{Computer Science}
 \CODE{SCI3027}
-
-%\PAAAINE{Ohjelmistotuotanto ja -liiketoiminta}
-%\CODE{T3003}
-%
-%\PAAAINE{Tietoliikenneohjelmistot}
-%\CODE{T3005}
-%
-%\PAAAINE{WWW-teknologiat} % vuodesta 2010
-%\CODE{IL3012}
-%
-%\PAAAINE{Mediatekniikka} % vuoteen 2010, kts. seur.
-%\CODE{T3004}
-%
-%\PAAAINE{Mediatekniikka} % vuodesta 2010, kts. edell.
-%\CODE{IL3011}
-%
-%\PAAAINE{Tietojenkäsittelytiede} % vuodesta 2010
-%\CODE{IL3010}
-%
-%\PAAAINE{Informaatiotekniikka} % vuoteen 2010
-%\CODE{T3006}
-%
-%\PAAAINE{Tietojenkäsittelyteoria} % vuoteen 2010
-%\CODE{T3002}
-%
-%\PAAAINE{Ohjelmistotekniikka}
-%\CODE{T3001}
 
 % Avainsanat tiivistelmään. Tarvittaessa myös englanniksi:
 
