@@ -62,23 +62,25 @@ Aalto University\\
 %Tutkimusaiheen lyhyt kuvaus. Esittele aiheesi tiivistetysti.
 \section{Abstract}
 
-Network personal video recorder (NPVR) is a service for recording broadcast TV programs for later viewing. Instead of storing recordings on the users local device, NPVR stores recordings on the content providers server. For every program listed in the Electronic program guide (EPG), a single recording is created and stored on the server. The users who record the same program will receive the same video from the server.
+Network personal video recorder (NPVR) is a type of service for recording broadcast TV programs for later viewing. Instead of storing recordings on the users local device, NPVR stores recordings on the content providers server. For every program listed in the Electronic program guide (EPG), a single recording is created and stored on the server. The users who record the same program will receive the same video from the server.
 
 The recording start and end times are determined by the scheduling information given in the EPG. However, it is common that programs are not broadcasted exactly according to the EPG schedule. Thus NPVR recordings typically have some non-program content at the beginning and end. The goal of this thesis is to study whether viewing statistics can be used in determining where the actual program content ends and where the closing credits begin in a NPVR recording.
 
 %Mitä haluat saada selville? Mitkä ovat keskeisiä kysymyksiä? Mistä näkökulmasta asiaa tarkastellaan?
 %Tutkimuskysymystä kannattaa siis rajata ja tarkentaa sekä huomioida näkökulman merkitys. Ts. jänikset eläintieteen kannalta ovat eri aihe kuin jänikset metsästyksen näkökulmasta.
-\section{Goals and perspectives}
+\section{Goals of the thesis}
+
+The main goal of the thesis is to find out whether the closing credits of NPVR recordings can be located with user viewing behaviour data. The sub-goals are figuring out how to automatically identify the drop in views that occurs near the closing credits and how to validate the results.
 
 %Millaisen aineiston varaan perustat tutkimuksesi? Arvioi materiaalin riittävyyttä asetettuihin tavoitteisiin nähden.
 %Pitää olla siis hieman kuvaa siitä, minkälaisen materiaalin kanssa ollaan tekemisissä ja mitä sellaisen käsittelyyn tarvitaan (etenkin siis tarvittavan ajan puolesta; ts. kuinka monta tuntia/minuuttia per lähde?).
 \section{Research material}
 
-The literature review part can be divided into three kind of subjects:
+The thesis will consists of empirical research and a literature review that lays foundations for the empirical research. The literature review can be divided into three parts:
 
 \begin{enumerate}
-    \item Previous research on methods for video content detection and labeling (closing credits, ads, etc.), to give more context on the thesis topic
-    \item Research on approaches to find the location of a specific pattern from data (in this case the drop in viewer count during closing credits). Needed for choosing a good model for deciding where the end credits begin based on the viewer count. 
+    \item Previous research on methods for video content detection and labeling (closing credits, ads, etc.), to give more context on the thesis topic.
+    \item Research on approaches for finding the location of a specific pattern from data, in this case the drop in viewer count during closing credits. Needed for choosing a good model for deciding where the end credits begin based on the viewer count.
     \item Research on the best practices of model validation. Needed for choosing a reasonable method for validating the results given by the labeling model.
 \end{enumerate}
 
@@ -94,11 +96,14 @@ The literature review part can be divided into three kind of subjects:
 %Ja... raportointi ei ole kirjoittamista vaan jo kirjoitettujen muistiinpanojen koostamista yhteneväksi teokseksi.
 \section{Research methods}
 
-%will follow the standard methods of empirical research
-%refutable hypothesis etc. (look into this)
+%refutable hypothesis
+The thesis will follow standard methods of empirical research. The starting hypothesis is that people generally only watch the core program content, skipping credits and ads, and with a large enough sample of viewings, the location of closing credits can be seen as a steep drop in viewer count. The hyphothesis and methods for its evaluation will be refined by the insights gained from the literature review.
 
 %Yleensä kaikkiin töihin liittyy kompastuskiviä. Ne on syytä tiedostaa etukäteen. Yhdessä työssä aihe on suurpiirteinen (työn rajaaminen vaikeaa), toisessa materiaalia on niukasti saatavissa, kolmannessa taas materiaalia on hukkumiseen asti.  Eli, nämä pitäisi kyseisen tutkimuksen osalta kirjata ylös, ja nähdä ne myös mahdollisuuksina (positiivisina haasteina) ei ainostaan esteinä.
 \section{Challenges}
+
+%The thesis advisor and supervisor are not experts on the thesis topic
+The thesis topic doesn't fall under the field of research of the advisor and supervisor, so they can most likely help with the generic things regarding academic writing and the scientific method, but maybe not so much with the specifics of the topic. Thus I'll have to be prepared to spend more time on finding research that is relevant for this thesis.
 
 %data collection
 The validation of the experimental work relies on collecting the end times of program recordings manually. This is somewhat time consuming. Part of the literature review could maybe be finding papers that discuss what is a sufficient amount of data for validation.
@@ -106,11 +111,10 @@ The validation of the experimental work relies on collecting the end times of pr
 %data being deleted
 Viewing statistics are stored for 100 days. This shouldn't be a problem if I follow the bachelor's thesis course scedule, but if writing the thesis takes longer this might become a problem. In order to have access to all viewings of a recording during the course of the entire writig process, I'm using only recordings that have been broadcasted in 2022.
 
-
 %Kuka tätä työtä tekee, kuka ohjaa, jne. Paljonko on käyttää aikaa. Tarvitaanko muuta? (Onko työssä joku kokeellinen osuus?)
 \section{Resources}
 
-The thesis topic is from a company. I have a full time contract for this spring, and I have agreed with my line manager that I can focus mainly on this thesis during the spring. The thesis will include an applied part, and the company will provide me access to the data needed for it.
+The thesis topic is from a company. I have a full time contract for this spring, and I have agreed with my line manager that I can focus mainly on this thesis. The company will provide the data needed for the empirical research.
 
 %Laadi tutkimustyölle ja raportoinnille realistinen aikataulu. Huolehdi, että suunnitelmasi vastaa kandidaatin tutkielman sekä seminaarin aikataulua sekä laajuutta.  \emph{Kurssiesitteessä omalle kirjoitusprosessille on arvioitu noin 6 op eli 160 tuntia eli noin 4 viikkoa työtä.}
 \section{Schedule}
@@ -119,7 +123,7 @@ Course scedule:
 
 \begin{tabular}{|p{20mm}|p{130mm}|}
 \hline
-8.2.   & 1st draft ready, 2-3 pages \\ \hline
+8.2.   & 1st draft ready, 2-3 pages (introduction and baseline approach)\\ \hline
 1.3.   & 2nd draft ready, $\sim$10 pages \\ \hline
 22.3.  & 3rd draft ready \\ \hline
 11.4.-14.4. & presentation at the final seminar \\ \hline
@@ -143,7 +147,6 @@ From the middle of February to the end of March. I'm aiming to have some results
 \textbf{Finishing the thesis:}\\
 From 3rd draft until the submission of the final version.
 
-
 %Laadi lyhyt sisällysluettelo, jossa on hahmoteltuna kandityön pää- ja alaluvut. Yleensä perusrunko on
 %(1) Johdanto,
 %(2) Tausta,
@@ -155,7 +158,7 @@ From 3rd draft until the submission of the final version.
 
 \begin{enumerate}
 \item Introduction 
-\begin{enumerate}[label=${}$]
+\begin{enumerate}
     \item Terminology, the goal and the scope of the thesis
 \end{enumerate}
 \item Background (literature review) 
@@ -166,8 +169,9 @@ From 3rd draft until the submission of the final version.
     \\(in this case the drop in viewer count during closing credits)
     \item Research on the best practices of model validation
     \end{enumerate}
-\item Research methods and data (own research)
-\begin{enumerate}[label=${}$]
+\item Research methods and data (empirical research)
+\begin{enumerate}
+    \item Baseline approach: checking the closing credits position by hand
     \item Trying out one or several of the approaches discussed in section 2.2,
     \\validating the results according to section 2.3
 \end{enumerate}
