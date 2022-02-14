@@ -204,6 +204,13 @@ FUNCTION {field.or.null}
   if$
 }
 
+FUNCTION {field.or.null.vol}
+{ duplicate$ empty$
+    { pop$ "" }
+    {"vol.~" swap$ * }
+  if$
+}
+
 FUNCTION {emphasize}
 { duplicate$ empty$
     { pop$ "" }
@@ -220,17 +227,17 @@ FUNCTION {format.names}
   s num.names$ 'numnames :=
   numnames 'namesleft :=
     { namesleft #0 > }
-    { s nameptr "{ff~}{vv~}{ll}{, jj}" format.name$ 't :=
+    { s nameptr "{vv~}{ll}{, jj}{, f.}" format.name$ 't :=
       nameptr #1 >
         { namesleft #1 >
-            { ", " * t * }
+            { " \& " * t * }
             { s nameptr "{ll}" format.name$ duplicate$ "others" =
                 { 't := }
                 { pop$ }
               if$
               t "others" =
                 { " \bbletal{}." * }
-                { " \bbland{} " * t * }
+                { " \& " * t * }
               if$
             }
           if$
@@ -293,7 +300,7 @@ FUNCTION {format.url}
 FUNCTION {format.doi}
 { doi empty$
     { "" }
-    { new.block "\doi{" doi * "}" * }
+    { new.block "Available at: doi:" doi * }
   if$
 }
 
@@ -420,12 +427,6 @@ FUNCTION {format.date}
     { "empty year in " cite$ * warning$
        pop$ "" }
     'skip$
-  if$
-  month empty$
-    'skip$
-    { month
-      " " * swap$ *
-    }
   if$
   extra.label *
 }
@@ -611,10 +612,10 @@ FUNCTION {format.eid}
 }
 
 FUNCTION {format.vol.num.pages}
-{ volume field.or.null
+{ volume field.or.null.vol
   number empty$
     'skip$
-    { "\penalty0 (" number * ")" * *
+    { "\penalty0 :" number * *
       volume empty$
         { "there's a number but no volume in " cite$ * warning$ }
         'skip$
@@ -625,7 +626,7 @@ FUNCTION {format.vol.num.pages}
     'skip$
     { duplicate$ empty$
         { pop$ format.pages }
-        { ":\penalty0 " * pages n.dashify * }
+        { ".~ \penalty0 art.~" * pages n.dashify * }
       if$
     }
   if$
@@ -790,15 +791,16 @@ FUNCTION {article}
   format.authors "author" output.check
   author format.key output
   new.block
-  format.title "title" output.check
+  format.title emphasize "title" output.check
   new.block
   crossref missing$
-    { journal emphasize "journal" output.check
+    { journal "journal" output.check
+      new.block
+      format.date "year" output.check
       eid empty$
         { format.vol.num.pages output }
         { format.vol.num.eid output }
       if$
-      format.date "year" output.check
     }
     { format.article.crossref output.nonnull
       eid empty$
@@ -807,7 +809,6 @@ FUNCTION {article}
       if$
     }
   if$
-  format.issn output
   format.doi output
   format.url output
   new.block
