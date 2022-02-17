@@ -626,7 +626,7 @@ FUNCTION {format.vol.num.pages}
     'skip$
     { duplicate$ empty$
         { pop$ format.pages }
-        { ".~ \penalty0 art.~" * pages n.dashify * }
+        { ".~ \penalty0 P.~" * pages n.dashify * }
       if$
     }
   if$
