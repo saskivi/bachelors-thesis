@@ -75,7 +75,7 @@ user viewing behaviour data are illustrated in Figure \ref{fig:user_viewing_beha
 The data in both figures consists of a sample of 100 user views, but the views are from two different TV programs. Figure \ref{fig:sitcom_viewing_behaviour} views are from a sitcom episode and Figure \ref{fig:soap_opera_viewing_behaviour} views are from an episode of a soap opera. The episodes are divided into one second-long segments, and calculated for each segment is the number of user views in which the segment was watched. The segments are plotted on the horizontal axis, and the number of user views per segment is plotted on the vertical axis. For example, 63 users from the sample of 100 users watched the part of the sitcom episode between 0:10:00 - 0:10:01 (600 on the horisontal axis in Figure ref{fig:sitcom_viewing_behaviour}).
 
 The change segments are indicated with a red background and the change points are marked with a vertical dashed line. In Figure \ref{fig:soap_opera_viewing_behaviour} there are a total of four change segments, which correspond to start credits, two advertisement breaks and end credits, respectively. Figure \ref{fig:sitcom_viewing_behaviour} episode has no advertisement breaks. The change points were checked by hand from both of the videos. It can be seen from the figures that a steep increase in views occurs when the actual program content begins, and correspondingly there is a steep decrease in views when the program content shifts to advertisements or closing credits.
-
+%TODO: subsection about data cleaning
 \newpage
 \section{Theoretical background} \label{sec:background}
 
@@ -105,6 +105,11 @@ Offline methods can be divided into two categories, based on whether the number 
 % search methods
 
 % cost functions
+
+% TODO: prioritize theoretical section 
+% TODO: check if median is not that good because there aren't that many outliers
+% TODO: explain why l2 works better than l1 for this use case, not priority but nice to have
+% TODO: figure out how penalty works, important (read pelt)
 
 \begin{equation}
     c_{L_2}(y_{a.b}) = \sum^b_{t=a+1} \left\lVert y_t-\overline{y}_{a.b} \right\rVert ^2_2%\hat{} \sum_{n = 1}^{\infty}  \left\lVert \right\rVert \overline{} 
@@ -143,7 +148,8 @@ In order to asses the accuracy of the output of the chosen algorithms, there are
 
 In order to evaluate how well a method detects change points, a ground truth is needed for comparison. Ground truth can be obtained by having a person look at a video recording and having them write down the timestamps of the change points.
 
-I have collected the start and end times of the change points from 174 NPVR recordings by hand with a margin of error of $\pm$ 1 seconds. The sample consists of episodes from 9 different TV series. The recordings are listed in Table \ref{tab:data} categorised by series. Every recording in the sample has at least one hundred user views.
+I have collected the start and end times of the change points from 174 NPVR recordings by hand with a margin of error of $\pm$ 1 seconds. The sample consists of episodes from 9 different TV series. The recordings are listed in Table \ref{tab:data} categorised by series. The episodes from series 1.-5. were recorded from non-commercial channels, that have no advertisement breaks.
+Every recording in the sample has at least one hundred user views.
 
 \begin{table}[h]
     \begin{center}
@@ -176,12 +182,19 @@ A Python library called \texttt{ruptures} was used for the change point detectio
 %algos and parameters used
 %\texttt{Pelt} (Pruned Exact Linear Time) was used as the search method.
 
-% how algos were chosen
+% search method should be optimal 
 Choosing the most suitable algorithm %from the library
-for this use-case can be done by considering the three aspects of change detection methods discussed in the literature review: cost-function, search method and constraint. Accuracy is more important than low computational complexity, so optimal method is preferable to an approximate one. As the number of change points is unknown, the only suitable optimal search method is \texttt{Pelt}. The algorithm was first indroduced by Killick et al. \cite{killickOptimalDetectionChangepoints2012}.
+for this use-case can be done by considering the three aspects of change detection methods discussed in the literature review: cost-function, search method and constraint. Accuracy is more important than low computational complexity, so optimal method is preferable to an approximate one. \texttt{ruptures} has two optimal search methods \texttt{Opt} and \texttt{Pelt}. The difference between them is that \texttt{Opt} works only when the number of change points is know beforehand, and \texttt{Pelt} is used for unknown number of change points. %decides the number of change points accoridng to a linear penalty constraint given by the user.
+\texttt{Opt} was first introduced by Bellman \cite{bellmanRoutingProblem1958} for an unrelated problem and \texttt{Pelt} was first indroduced by Killick et al. \cite{killickOptimalDetectionChangepoints2012}. 
 
-% output visualisation & comparison to gt fig
-An example of \texttt{Pelt} output is visualised in Figure \ref{fig:ruptures_change_detection}. The input data is the same as in Figure \ref{fig:soap_opera_viewing_behaviour}. Red rectangles on the plot represent the actual location of the starting credits, advertisement break and closing credits, respectively. The vertical dashed lines indicate the change points determined by Rupture. They appear to be very close to the genuine change points at the edges of the red blocks.
+% cost function
+\texttt{Opt} and \texttt{Pelt} can be used with three different cost functions $c_{L1}$, $c_{L2}$ and $c_{rbf}$. 
+
+%least absolute deviation, least squared deviation (variance), kernel cost function
+
+% output visualisation & comparison to ground truth fig
+An example of \texttt{Pelt} output with cost function $c_{L2}$ is visualised in Figure \ref{fig:ruptures_change_detection}. The viewing behaviour data is the same as in Figure \ref{fig:user_viewing_behaviour}. The difference between the figures is that in Figure \ref{fig:ruptures_change_detection} the vertical dashed lines mark the change points determined by \texttt{ruptures} instead of the real changepoints checked by hand. The start and end times of advertisement breaks were found fairly accurately, but for the start and end credits only one change point was found. The change point for the closing credits seems to align with the beginning of the credits. The change point for the start credits falls in the middle of the start credits.
+
 
 % pruning of data
 
@@ -189,19 +202,23 @@ An example of \texttt{Pelt} output is visualised in Figure \ref{fig:ruptures_cha
     \centering
     \begin{subfigure}[b]{\textwidth}
        \includegraphics[width=1\textwidth]{../plots/sitcom-pelt_l2_pen30000.pdf}
-       \caption{\texttt{Pelt} output for Figure \ref{fig:sitcom_viewing_behaviour} data}
+       \caption{\texttt{Pelt} $c_{L2}$ output for Figure \ref{fig:sitcom_viewing_behaviour} data}
        \label{fig:pelt_sitcom} 
     \end{subfigure}
     
     \begin{subfigure}[b]{\textwidth}
        \includegraphics[width=1\textwidth]{../plots/soap_opera-pelt_l2_pen30000.pdf}
-       \caption{\texttt{Pelt} output for Figure \ref{fig:soap_opera_viewing_behaviour} data}
+       \caption{\texttt{Pelt} $c_{L2}$ output for Figure \ref{fig:soap_opera_viewing_behaviour} data}
        \label{fig:pelt_soap_opera}
     \end{subfigure}
-    \caption{\texttt{Pelt} output for Figure \ref{fig:user_viewing_behaviour} data}
+    \caption{\texttt{Pelt} $c_{L2}$ output for Figure \ref{fig:user_viewing_behaviour} data}
     \label{fig:ruptures_change_detection}
     %\caption{Visualisation of user views count for each second in an example NVPR recording}
 \end{figure}
+
+%\subsubsection{Opt}
+
+%\subsubsection{Pelt}
 
 \subsection{Results} \label{sec:results}
 
