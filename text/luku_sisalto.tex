@@ -1,9 +1,7 @@
 \section{Introduction} \label{sec:intro}
 
 % lineeaari tv -> videonauhuri -> on demand -> on demand tv
-Watching television used to be a very time-sensitive activity. If one wanted to see a TV program, they had to watch it when it was broadcasted. Videocassette recorders %, and later set-top-boxes,
-brought the freedom to store programs and to choose freely when to watch them. However, recording programs for later viewing has one major inconvenience. Programs are not broadcasted strictly according to the schedule of the Electronic program guide (EPG). Sometimes programs start earlier or end later than what is stated in the EPG.
-To ensure that the entire program is recorded, recording must start before the EPG start time and end after the EPG end time. %, with some margin.
+Watching television used to be a very time-sensitive activity. If one wanted to see a TV program, they had to watch it when it was broadcasted. Videocassette recorder brought the freedom to store programs and to choose freely when to watch them. Even though newer technologies have replaced the videocassette recorder, one major inconvenience still remains. Programs are not broadcasted strictly according to the schedule of the Electronic program guide (EPG). Sometimes programs start earlier or end later than what is stated in the EPG. To ensure that the entire program is recorded, recording must start before the EPG start time and end after the EPG end time. %, with some margin.
 This usually results in some non-program content being included in the recording. Skipping over the non-program content can be frustrating for the person watching the recording.
 
 Knowing when the program truly starts and ends would solve the issue, but this information is not generally available. % commonly transmitted in the broadcast
@@ -12,14 +10,18 @@ This leaves the option to detect the start and end of the program from the recor
 
 % When video recorders became affordable, they enabled people to record TV programs and watch them whenever. Currently, user-recorded TV programs no longer need to be stored on the users local devices, as content providers are increasingly offering storage space on their own servers for users. 
 
-% NVPR = videonauhuri pilvessä, jonka katsoja jakaa muiden kanssa
-Network personal video recorder (NPVR) is a type of service for recording broadcast TV programs for later viewing. Instead of storing recordings on the users local device, NPVR stores recordings on the content providers server. For every program listed in the EPG, a single recording is created and stored on the server. The users who record the same program will receive the same video from the server.
+% NVPR = videonauhuri pilvessä, (jonka katsoja jakaa muiden kanssa)
+Network personal video recorder (NPVR) is a type of service for recording broadcast TV programs for later viewing. Instead of storing recordings on the users' local device, NPVR stores recordings on the content provider's server. %For every program listed in the EPG, a single recording is created and stored on the server. The users who record the same program will receive the same video from the server. 
 
 % NPVR ongelma
-The start and end times of NPVR recordings are determined by the scheduling information given in the EPG, but some margin is added on both ends to ensure that the entire program is recorded. Similar to storing the recordings locally, this typically leads to non-program content being included in recordings. However, NPVR has a certain advantage over local storage. Users who have recorded the same program will watch the exact same recording, and statistics of which parts of the recording users watch and which parts they skip can be collected and analysed.
+The start and end times of recordings are determined by the scheduling information given in the EPG, and a fixed amount of margin is added on both ends to ensure that the entire program is recorded. %Similar to storing the recordings locally,
+This leads to non-program content being included in recordings, which the users typically skip. %However, NPVR has a certain advantage over local storage. Users who have recorded the same program will watch the exact same recording, and 
+However, statistics of which parts of the recording users watch and which parts they skip can be collected and analysed. 
+% TODO: explain that the margin is the same for all users / recordings
 
 % motivaatio
-The goal of this thesis is to study whether user viewing behaviour can be used to determine when the opening and closing credits and advertisement breaks occur in an NPVR recording. I am writing this thesis for an NPVR service provider company. From the perspective of an NPVR service provider, detecting the location of core program content is useful for the following reasons. Firstly, less storage space is needed if the surplus contet is discarded. Secondly, it is convenient for the customers if the relevant content of a recording is pre-identified and they do not have to search for it. %Thirdly, when the customers want to watch multiple episodes of a series in a row, it is convenient for them if a link to the next episode is displayed during the closing credits.
+The goal of this thesis is to study whether user viewing behaviour can be used to %determine when the opening and closing credits occur 
+detect when the actual program content begins and ends in an NPVR recording. I am writing this thesis for an NPVR service provider company. From the perspective of an NPVR service provider, detecting the location of core program content is useful for the following reasons. Firstly, less storage space is needed if the surplus content is discarded. Secondly, it is convenient for the customers if the relevant content of a recording is pre-identified and they do not have to search for it. %Thirdly, when the customers want to watch multiple episodes of a series in a row, it is convenient for them if a link to the next episode is displayed during the closing credits.
 
 % rajaus
 % User viewing behaviour might also be useful for detecting starting credits and advertisement breaks, but on this thesis I will focus on the closing credits detection to narrow down the topic. I will also restrict the examined recordings to TV series with multiple episodes and at least one hundred views per episode.
@@ -27,21 +29,29 @@ The goal of this thesis is to study whether user viewing behaviour can be used t
 % sisältö ja rakenne
 %The main goal of this thesis is to study whether user viewing behaviour can be used to detect start and end credits and advertisement breaks of NPVR recordings.
 The thesis is structured as follows. Section \ref{sec:data} gives an overview on the characteristics of the viewing behavioiur data. Section \ref{sec:background} discusses the theoretical background of signal change point detection from the perspective of this specific use case. %also result evaluation and validation
-Section \ref{sec:casestudy} discusses the Python scientific library \texttt{ruptures} and how it is used to detect change points in this thesis. The results are evaluated in section \ref{sec:results}. Section \ref{sec:discussion} discussion considers the viability of using user viewing behaviour for change point detection, based on the previous sections. Lastly, the main points of this thesis are summarised in section \ref{sec:conclusions} conclusions.
+Section \ref{sec:casestudy} discusses the Python scientific library \texttt{ruptures} and how it is used to detect change points in this thesis. The results are evaluated in section \ref{sec:results}. Section \ref{sec:discussion} considers the viability of using user viewing behaviour for change point detection, based on the previous sections. Lastly, the main points of this thesis are summarised in section \ref{sec:conclusions}.
 
 \section{User viewing behaviour data} \label{sec:data} % or use case, signal type, data properties, structure of the data
 
 % what is the user viewing behaviour data 
-Whenever an NVPR video is watched by a user, certain metrics about the viewing event are saved. The main reason for collecting viewing metrics is the monitoring of the amount of views and the user experience quality. From the metrics of one view, it can be calculated which parts of the video the user watched and which parts they skipped. Aggregating this data from multiple views of the same recording allows acquiring an overview of what parts of the recording users typically watch. This type of recording specific aggregated view count is referred to as user behaviour data in this thesis.
+Whenever an NVPR video is watched by a user, certain metrics about the viewing event are saved. The main reason for collecting viewing metrics is the monitoring of the amount of views and the user experience quality. It can be calculated from the metrics of one view which parts of the video the user watched and which parts they skipped. Aggregating this data from multiple views of the same recording allows acquiring an overview of what parts of the recording users typically watch. This type of recording specific aggregated view count is referred to as user behaviour data in this thesis.
 %The change point detection will be done based on this data.
 
-% core program content vs other stuff
+% core program content, credits, non-program content
 % TODO: more accuracy in program content description
-The content of an NPVR recording %consists of
-can be categorised into opening credits, core program content, advertisement breaks, closing credits and non-program content at the very beginning and end of a recording. Every recording has core program content and closing credits, but not all recordings have opening credits or advertisement breaks. Core program content is considered relevant for the users, while non-program content and advertisement breaks are considered irrelevant. The relevancy of opening and closing credits is something in between, since many users prefer to skip them, but they still belong to the program and are not extra content as such.
+%The content of an NPVR recording can be categorised into opening credits, core program content, advertisement breaks, closing credits and non-program content at the very beginning and end of a recording. Every recording has core program content, closing credits and non-program content, but not all recordings have opening credits or advertisement breaks. User interest for the content categories varies. Core program content is what most users watch the recordings for, and thus is has many views. Many users skip the non-program content and advertisement breaks. Interest to opening and closing credits varies. Some users do not mind if they do not see the entire opening credits. Closing credits do not typically interes users, if there is no extra content included in them, such as a sneak peek to the next episode. 
+%Core program content is considered relevant for the users, while non-program content and advertisement breaks are considered irrelevant. The relevancy of opening and closing credits is something in between, since many users prefer to skip them, but they still belong to the program and are not extra content as such.
+The content of an NVPR recording can be divided into program and non-program content. %Program content is the program itself and 
+Non-program content is the surplus material at the very beginning and end of a recording, that is a byproduct of ensuring that the entire program is recorded even if its broadcast time deviates sligtly from the EPG schedule. Program content can be categorised into opening and closing credits, core program content and advertisement breaks, although not all programs have them.
 
-% change points definition
-In this thesis, opening credits, advertisement breaks and closing credits will be referred to as change segments. The start and end points of the aforementioned will be referred to as change points. The goal of this thesis is to find a suitable method to determine at least the approximate location of change points.
+% what users typically watch
+User interest for the content categories varies. Core program content is what the users watch the recordings for, and non-program content is irrelevant for the users. This is reflected in the viewing behaviour. Users also tend to skip over advertisement breaks. Viewing behaviour regarding the opening and closing credits is not as clear cut, %Generally interest to opening and closing credits varies.
+%Some users do not mind if they do not see the entire opening credits.
+but generally users are content with starting watching during the opening creidts. Closing credits do not typically interest users, given there is no extra content included in them, such as a preview of the next episode. 
+
+% TODO: change points definition
+%In this thesis, opening credits, advertisement breaks and closing credits will be referred to as change segments. The start and end points of the aforementioned will be referred to as change points. The goal of this thesis is to find a suitable method to determine at least the approximate location of change points.
+%The later chapters of this thesis will focus on detecting the opening and closing credits, based on the user behaviour data. The start and end points of the credits will be referred to as change points.
 
 \begin{figure}[h]
     \centering
@@ -63,7 +73,10 @@ In this thesis, opening credits, advertisement breaks and closing credits will b
 % example
 Two examples of user viewing behaviour data are illustrated in Figure \ref{fig:user_viewing_behaviour}. The data in both figures consists of a sample of 100 user views, but the views are from two different TV programs. Figure \ref{fig:sitcom_viewing_behaviour} views are from a sitcom episode and Figure \ref{fig:soap_opera_viewing_behaviour} views are from an episode of a soap opera. The episodes are divided into one second-long segments, and calculated for each segment is the number of user views in which the segment was watched. The segments are plotted on the horizontal axis, and the number of user views per segment is plotted on the vertical axis. For example, 63 users from the sample of 100 users watched the part of the sitcom episode between 0:10:00 - 0:10:01 (600 on the horisontal axis in Figure ref{fig:sitcom_viewing_behaviour}).
 
-The background colour in the figure represents the content type of the time segment. Non-program content has white background, core program content has blue and change segments are indicated with a beige background. The change points are marked with a vertical dashed line. In Figure \ref{fig:soap_opera_viewing_behaviour} there are a total of eight change points and four change segments, which correspond to opening credits, two advertisement breaks and closing credits, respectively. Figure \ref{fig:sitcom_viewing_behaviour} episode has no advertisement breaks, thus having four change points and two change segments. The change points were checked by hand from both of the videos. It can be seen from the figures that a steep increase in views occurs when the actual program content begins, and correspondingly there is a steep decrease in views when the program content shifts to advertisements or closing credits.
+The background colour in the figure represents the content type of the time segment: non-program content is white, core program content is blue and beige indicates the opening and closing credits. The change points are marked with a vertical dashed line.
+There is a distict increase in the number of views during the opening credits in both figures. Likewise, there is a decrease in the number of views during closing credits.
+The program visualised in Figure \ref{fig:soap_opera_viewing_behaviour} has two advertisement breaks, which appear as recesses in the number of views during the core program content. Figure \ref{fig:sitcom_viewing_behaviour} episode has no advertisement breaks.
+%In Figure \ref{fig:soap_opera_viewing_behaviour} there are a total of eight change points and four change segments, which correspond to opening credits, two advertisement breaks and closing credits, respectively. Figure \ref{fig:sitcom_viewing_behaviour} episode has no advertisement breaks, thus having four change points and two change segments. The change points were checked by hand from both of the videos. It can be seen from the figures that a steep increase in views occurs when the actual program content begins, and correspondingly there is a steep decrease in views when the program content shifts to advertisements or closing credits.
 
 %TODO: subsection about data cleaning
 \subsection{Data cleaning} % or data cleansing 
@@ -166,22 +179,22 @@ Standard statistical methods for univariate analysis will be used for result eva
 
 In order to evaluate how well a method detects change points, a ground truth is needed for comparison. Ground truth can be obtained by having a person look at a video recording and having them write down the timestamps of the change points.
 
-I have collected the start and end times of the change points from 206 NPVR recordings by hand with a margin of error of $\pm$ 1 seconds. The sample consists of episodes from 14 different TV series. 116 of the sample recordings were broadcasted on non-commercial channels, so they do not contain advertisement breaks. Some general information about these recordings is listed in Table \ref{tab:data_no_ads} categorised by series. The rest 90 recordings with advertisement breaks are listed in Table \ref{tab:data_ads}. Every recording in the sample has at least one hundred user views.
+I have collected the start and end times of the change points from 228 NPVR recordings by hand with a margin of error of $\pm$ 1 seconds. The sample consists of episodes from 14 different TV series. 138 of the sample recordings were broadcasted on non-commercial channels, and thus do not contain advertisement breaks. Some general information about these recordings is listed in Table \ref{tab:data_no_ads}. The rest 90 recordings with advertisement breaks are listed in Table \ref{tab:data_ads}. Every recording in the sample has at least one hundred user views.
 
 \begin{table}[h]
     \begin{center}
     \begin{tabular}{|p{15mm}|p{20mm}|p{28mm}|p{30mm}|} %{|c|c|c|c|}%
         \hline
         \textbf{\# series} & \textbf{\# episodes} & \textbf{episode length} & \textbf{genre}  \\ \hline
-        1. & 32 & 30 min & comedy\\ \hline
+        1. &  6 & 30 min & reality television\\ \hline
         2. & 10 & 30 min & comedy\\ \hline
-        3. &  6 & 30 min & reality television\\ \hline
+        3. & 32 & 30 min & comedy\\ \hline
         4. &  9 & 40 min & drama\\ \hline
-        5. &  8 & 45 min & drama\\ \hline
-        6. & 30 & 45 min & drama\\ \hline
-        7. &  4 & 45 min & drama\\ \hline
-        8. &  4 & 50 min & drama\\ \hline
-        9. & 10 & 50 min & drama\\ \hline
+        5. &  4 & 45 min & drama\\ \hline
+        6. &  16 & 45 min & drama\\ \hline
+        7. & 30 & 45 min & drama\\ \hline
+        8. &  8 & 50 min & drama\\ \hline
+        9. & 20 & 50 min & drama\\ \hline
         10. & 3 & 90 min & drama\\ \hline
     \end{tabular}
     \end{center}
@@ -223,7 +236,7 @@ The \texttt{ruptures} library supports three different cost functions that can b
 %least absolute deviation, least squared deviation (variance), kernel cost function
 %TODO: explain why l2 is best
 
-Following the convention used by Truong et al. the actual change points will be denoted by $t$ and the change points produced by \texttt{ruptures} will be denoted by $\hat{t}$ \cite{truongSelectiveReviewOffline2020}. Each change point has a subscript, where the first letter denotes the change segment the change point represents ($o$: opening credits, $a$: advertisement break, $c$: closing credits). If there are separate change points for the start and end timestamps of a change segment, the subscript will have a second letter that denotes which one of those the change point represents ($s$: start, $e$: end). This notation is illustrated in Figure \ref{fig:change_point_notation}.
+Following the convention used by Truong et al. the actual change points will be denoted by $t$ and the change points produced by \texttt{ruptures} will be denoted by $\hat{t}$ \cite{truongSelectiveReviewOffline2020}. Each change point has a subscript, where the first letter denotes the credits where the change point belongs to ($o$: opening credits, $c$: closing credits). If there are separate change points for the start and end timestamps of the credits, the subscript will have a second letter that denotes which one of those the change point represents ($s$: start, $e$: end). This notation is illustrated in Figure \ref{fig:change_point_notation}.
 
 \begin{figure}[H]
     \centering
@@ -233,6 +246,60 @@ Following the convention used by Truong et al. the actual change points will be 
 \end{figure}
 
 \section{Results} \label{sec:results}
+
+\subsection{Non-commercial channels with \texttt{Opt} as search method} \label{sec:results_opt}
+
+Change points were calculated with \texttt{ruptures} for the 116 recordings without advertisement breaks listed in Table \ref{tab:data_no_ads}. The search method used was \texttt{Opt} with a fixed number of change points set to $k=2$. The cost function used was $c_{L_2}$ as given in equation \ref{eq:l2}. Statistics of the result are listed in Table \ref{tab:statistics_opt}.
+
+\begin{table}[h]
+    \begin{center}
+    \begin{tabular}{|c|c|c|c|c|}%{|p{15mm}|p{20mm}|p{22mm}|p{28mm}|p{30mm}|} 
+        \hline
+        \textbf{statistic} & $\hat{t}_o-t_{os}$ & $\hat{t}_o-t_{oe}$ & $\hat{t}_c-t_{cs}$ & $\hat{t}_o-t_{os}$  \\ \hline
+        minimum & -22 & -265 & 3 & -107\\ \hline
+        1st quartile & 9 & -17.75 & 5 & -50.75\\ \hline
+        median & 16 & -5 & 7 & -35.5\\ \hline
+        3rd quartile & 45,75 & -5 & 8 & -28 \\ \hline
+        maximum & 157 & 152	& 36 & 5\\ \hline
+        variance & 676 & 1380	& 17.2 & 873\\ \hline
+        standard deviation & 26.0 & 36.2 & 4.15 & 29.5\\ \hline
+    \end{tabular}
+    \end{center}
+    \caption{Five-number summary and other statistics for \texttt{Opt} $c_{L2}$, $k=2$}
+    \label{tab:statistics_opt}
+\end{table}
+
+Both \texttt{Opt} and \texttt{Pelt} are optimal search methods, meaning that with the same cost function the output produced by the methods is identical, if the number of change points predicted by \texttt{Pelt} happens to be the same that was given as a parameter $k$ to \texttt{Opt}. For example, the \texttt{Opt} $c_{L_2}$ output with $k=2$ for Figure \ref{fig:sitcom_viewing_behaviour} data is visualised in Figure \ref{fig:pelt_sitcom}.
+
+\begin{figure}[H]
+  \begin{subfigure}[t]{.49\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{../plots/distances/opt_l2_dist_start_first.pdf}
+    \caption{Start of opening credits}
+    \label{fig:t_diff_opt_os}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{.49\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{../plots/distances/opt_l2_dist_start_last.pdf}
+    \caption{End of opening credits}
+    \label{fig:t_diff_opt_oe}
+  \end{subfigure}
+  \begin{subfigure}[t]{.49\textwidth}
+      \centering
+      \includegraphics[width=\linewidth]{../plots/distances/opt_l2_dist_end_first.pdf}
+      \caption{Start of closing credits}
+      \label{fig:t_diff_opt_cs}
+    \end{subfigure}
+    \begin{subfigure}[t]{.49\textwidth}
+      \centering
+      \includegraphics[width=\linewidth]{../plots/distances/opt_l2_dist_end_last.pdf}
+      \caption{End of closing credits}
+      \label{fig:t_diff_opt_ce}
+    \end{subfigure}
+  \caption{\texttt{Opt} $c_{L2}$ output compared to actual change points of credits}
+  \label{fig:t_diff_opt_credits}
+\end{figure}
 
 \subsection{All channels with \texttt{Pelt} as search method} \label{sec:results_pelt}
 
@@ -381,31 +448,6 @@ For the closing credits, it is visible in Figure \ref{fig:t_diff_cs} and \ref{fi
 
 Out of the 206 recordings, $\hat{t}_o$ is somewhere on the opening credits in 180 recordings and $\hat{t}_e$ is somewhere on the closing credits in 199 recordings. 
 That means the approximate location of the opening credits was predicted correctly in $87\%$ of the sample recordings and the approximate location of the closing credits was predicted correctly in $97\%$ of the sample recordings.
-
-\subsection{Non-commercial channels with \texttt{Opt} as search method} \label{sec:results_opt}
-
-Change points were calculated with \texttt{ruptures} for the 116 recordings without advertisement breaks listed in Table \ref{tab:data_no_ads}. The search method used was \texttt{Opt} with a fixed number of change points set to $k=2$. The cost function used was $c_{L_2}$ as given in equation \ref{eq:l2}. Statistics of the result are listed in Table \ref{tab:statistics_opt}.
-
-\begin{table}[h]
-    \begin{center}
-    \begin{tabular}{|c|c|c|c|c|}%{|p{15mm}|p{20mm}|p{22mm}|p{28mm}|p{30mm}|} 
-        \hline
-        \textbf{statistic} & $\hat{t}_o-t_{os}$ & $\hat{t}_o-t_{oe}$ & $\hat{t}_c-t_{cs}$ & $\hat{t}_o-t_{os}$  \\ \hline
-        minimum & -22 & -265 & 3 & -107\\ \hline
-        1st quartile & 9 & -18,5 & 5 & -63,5\\ \hline
-        median & 17 & -7 & 7 & -44.5\\ \hline
-        3rd quartile & 46 & -5 & 8 & -28 \\ \hline
-        maximum & 157 & 152	& 24 & 136\\ \hline
-        % pyöristä alla olevat TODO: mieti tarkkuus, nyt on 3 vedettynä hatusta
-        variance & 647 & 1380	& 8,78 & 1220\\ \hline
-        standard deviation & 25,4 & 37,1 & 2,96 & 35,0\\ \hline
-    \end{tabular}
-    \end{center}
-    \caption{Five-number summary and other statistics for \texttt{Opt} $c_{L2}$, $k=2$}
-    \label{tab:statistics_opt}
-\end{table}
-
-Both \texttt{Opt} and \texttt{Pelt} are optimal search methods, meaning that with the same cost function the output produced by the methods is identical, if the number of change points predicted by \texttt{Pelt} happens to be the same that was given as a parameter $k$ to \texttt{Opt}. For example, the \texttt{Opt} $c_{L_2}$ output with $k=2$ for Figure \ref{fig:sitcom_viewing_behaviour} data is visualised in Figure \ref{fig:pelt_sitcom}.
 
 \section{Discussion} \label{sec:discussion}
 
