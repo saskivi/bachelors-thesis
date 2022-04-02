@@ -26,6 +26,12 @@ detect when the actual program content begins and ends in an NPVR recording. I a
 % rajaus
 % User viewing behaviour might also be useful for detecting starting credits and advertisement breaks, but on this thesis I will focus on the closing credits detection to narrow down the topic. I will also restrict the examined recordings to TV series with multiple episodes and at least one hundred views per episode.
 
+% työ pohjautuu pitkälti Truongin paperiin ja siinä määriteltyyn luokitteluun sekä paperiin liittyvään python kirjastoon
+% ongelmaa lähestytään signaalinkäsittelyn kautta
+%This thesis is largely based on the work of Truong et al. \cite{truongSelectiveReviewOffline2020}. 
+This thesis is largely based on the Selective review of offline change point detection methods by Truong et al. \cite{truongSelectiveReviewOffline2020}.
+The program content detection task is formulated as a offline signal change point detection problem, and the suitable algorithms for solving the problem are chosen with the help of the typology established in the research paper. The empirical calculations are done with the Python library \texttt{ruptures}, which is associated with the aforementioned research paper.
+
 % sisältö ja rakenne
 %The main goal of this thesis is to study whether user viewing behaviour can be used to detect start and end credits and advertisement breaks of NPVR recordings.
 The thesis is structured as follows. Section \ref{sec:data} gives an overview on the characteristics of the viewing behavioiur data. Section \ref{sec:background} discusses the theoretical background of signal change point detection from the perspective of this specific use case. %also result evaluation and validation
@@ -117,32 +123,117 @@ Lastly views with implausible player source duration are removed. This includes 
 %cost function, parametric/non-parametric
 %search method, optimal/approximate (accuracy vs performance)
 
+% this problem -> signal processing problem -> change point detection problem
+% online/offline
+% offline -> number of changes known/unknown
+
 %tie to npvr case & definition
 Locating video content changes from user viewing behaviour time series data can be formulated as a signal processing problem, more precisely as a change point detection problem. Signal change point detection is quite widely researched topic, since it has applications in multiple fileds such as network traffic data analysis \cite{levy-leducDetectionLocalizationChangepoints2009} \cite{lung-yut-fongDistributedDetectionLocalization2012}, bio-informatics \cite{liuChangepointDetectionMethod2018} \cite{vertFastDetectionMultiple2010} and climatology \cite{reevesReviewComparisonChangepoint2007} \cite{verbesseltDetectingTrendSeasonal2010a}.
 % TODO: add examples and check that the papers make sense
+There are also other possible approaces for time series change point detection, including Bayesian approaches, but in order to narrow down the scope of this thesis they wont be examined.
+% TODO: tarkista onko bayes laskennallisesti raskaampi, oletus on et on
+% statistical vs signal processing approaches
+% global / sliding window / bottom up / top down
+% pitäiskö selittää miks naiivit menetelmät ei oo riittäviä
 
 % offline
-Change point detection problems can be divided into two main categories, depending on whether the change detection must be done for incoming data in near real-time, or not. Methods solving the former case are referred to as online algorithms. Offline algorithms solve the latter case, and they differ from the online algorithms by getting the entire dataset as input and typically being more computationally complex, but also by detecting the changes more accurately.
-%TODO: citations
+Change point detection problems can be divided into two main categories, depending on whether the change detection must be done for incoming data in near real-time, or not. Methods solving the former case are referred to as online algorithms. Offline algorithms solve the latter case, and they differ from the online algorithms by getting the entire dataset as input and typically being more computationally complex, but also by detecting the changes more accurately. The user viewing behaviour data is aggregated from multiple views after the views have ended, meaning that all of the data to be analysed is available from the start, allowing offline methods to be used for change point detection.
+%TODO: citations, rewrite
 
-% unknown number of changes
-Offline methods can be divided into two categories, based on whether the number of changes in the dataset is known beforehand, or not. If the number of change points is not known, an extra step is needed to determine it. There are multiple methods for doing this.
+% number of change points
+Offline % (signal) change point detection
+methods can be divided into two categories, based on whether the number of change points in the signal, %dataset
+$k$, is known beforehand, or not. If $k$ %the number of change points
+is unknown, an extra step is needed to determine it. There are multiple methods for doing this. Examining the data in section \ref{sec:data}, based on human observation it would be reasonable to assume that a singe change point can be found quite reliably for the opening and closing credits. However, advertisement breaks can also produce notable drops in the number of views which may be interpreted as change points, so if the recording might contain them the number of change points cannot be known in advance.
 
-Literature review by Truong et al. \cite{truongSelectiveReviewOffline2020} compared different offline change point detection methods. It classified change point detection methods according to how the homogenuity of a signal is measured, and how the segments where to evaluate the homogenuity are chosen from the signal. The measure of homogenuity is referred to as \textit{cost function} and the way to choose the segments is referred to as \textit{search method}.
+% paperi, cost function ja seatch method
+Literature review by Truong et al. \cite{truongSelectiveReviewOffline2020} compared different offline change point detection methods. It classified change point detection methods according to how the homogenuity of a signal segment is measured, and how the segments where to evaluate the homogenuity are chosen from the signal. The measure of homogenuity is referred to as \textit{cost function} and the way to choose the segments is referred to as \textit{search method}. These are discussed in more detail in sections \ref{subsec:costfunction} and \ref{subsec:searchmethod}.
 %The paper identified three components that are present in all change 
 %classified change point detection methods according to three criteria. 
 % search methods
 % cost functions
 % constraint functions when k is unknown
 
-The literature review divided search methods into two categories, by whether they provide always an optimal solution for change point location with the chosen cost function, or not. It introduced only two optimal search methods, \texttt{Opt} and \texttt{Pelt}. The difference between them is that \texttt{Opt} works only when the number of change points is know beforehand, and \texttt{Pelt} is used when the number of change points is unknown. 
+% seuraavaksi esitellään search methodien toimintaperiaatteet ja käytetyt cost functionit
 
-Different cost functions work well with different types of signals. 
-A cost function that works well for mean shift detection is least squared deviation $c_{L_2}$. It measures the variance and is defined as follows:
-\begin{equation}
-    c_{L_2}(y_{a.b}) = \sum^b_{t=a+1} \left\lVert y_t-\overline{y}_{a.b} \right\rVert ^2_2%\hat{} \sum_{n = 1}^{\infty}  \left\lVert \right\rVert \overline{} 
+\subsection{Cost function} \label{subsec:costfunction}
+
+%what is cost function
+
+%erittelyä, parametric vs nonparametric
+What is a good cost function depends on what kind of change occurs in the the signal on a change point. The literature review by Truong et al. \cite{truongSelectiveReviewOffline2020} divides cost functions into two categories, parametric and non-parametric. Parametric models make some assumptions about the statistical parameters of the data where the sample comes from, whereas non-parametric do not.
+
+Maximum likelihood estimation is a commonly used mathematically simple parametric model for change point detection. %TODO: lisää kaava tästä
+There are multiple cost functions based on this model for different probability distributions.
+
+Looking at the user viewing behaviour data discussed in section \ref{sec:data}, it seems that what best describes what happens to the signal in change points is a shift in the distribution mean. A cost function that works well for mean shift detection is least squared deviation $c_{L_2}$, which is a maximum likelihood model. It measures the variance and is defined as follows:
+\begin{equation} % paper
+    c_{L_2}(y_{a.b}) = \sum^b_{t=a+1} \left\lVert y_t-\overline{y}_{a.b} \right\rVert ^2_2
     \label{eq:l2}
 \end{equation}
+where $y_{a.b}$ is a segment from signal $y$ from index $a$ to $b$, and  $\overline{y}_{a.b}$ is the empirical mean of $y_{a.b}$.
+\begin{comment}
+\begin{equation} % documentation
+  c_{L_2}(y_I) = \sum_{t \in I} \left\lVert y_t-\overline{y} \right\rVert ^2_2
+  \label{eq:l2}
+\end{equation}
+\end{comment}
+
+Another possibly suitable cost function for the data is the least absolute deviation $c_{L_1}$. It detects changes in the median and can be used also for detecting shifts of other central points such as mean and mode. It is defined as follows:
+% ruptures documentation for L1: This cost function detects changes in the median of a signal. Overall, it is a robust estimator of a shift in the central point (mean, median, mode)
+\begin{equation} % paper style?
+  c_{L_1}(y_{a.b}) = \sum^b_{t=a+1} \left\lVert y_t-\overline{y}_{a.b} \right\rVert_1
+  \label{eq:l1}
+\end{equation}
+\begin{comment}
+\begin{equation} % documentation
+    c_{L_1}(y_I) = \sum_{t \in I} \left\lVert y_t-\overline{y} \right\rVert_1
+    \label{eq:l1}
+\end{equation}
+\end{comment}
+
+\subsection{Search method} \label{subsec:searchmethod}
+
+% optimal vs approximate
+The literature review divided search methods into two categories, by whether they provide always an optimal solution for change point location with the chosen cost function, or if they provide an approximate solution. There is typically a tradeoff between more accurate results and lower computational complexity.
+
+Two optimal search methods were presented in the literature review, \texttt{Opt} and \texttt{Pelt}. \texttt{Opt} was first introduced by Bellman \cite{bellmanRoutingProblem1958} for an unrelated problem. \texttt{Pelt}, short for Pruned Exact Linear Time, was first indroduced by Killick et al. \cite{killickOptimalDetectionChangepoints2012}. The main difference between the methods is that \texttt{Opt} requires the number of change points $k$ to be known beforehand, and \texttt{Pelt} can be used when $k$ is unknown. 
+% decides the number of change points accoridng to a linear penalty constraint given by the user.
+
+% commercials
+As menitioned in section \ref{subsec:methods}, advertisement breaks in the recording may produce recesses in the viewer count and thus appear as change points. The number of advertisement breaks per program varies, meaning that $k$ is unknown if the recording might contain advertisement breaks. However, programs in noncommercial channels never contain advertisements, and for them it can be assumed that there should be exactly one change point at the beginning and one at the end of the program. This implies that \texttt{Opt} should be a viable search method for recordings from non-commercial channels with $k=2$.
+% TODO: consider explaining 'noncommercial means k=2' in one place
+% TODO: mention dynamic programming for opt?
+The \texttt{Opt} algorithm for $k = 2$ proceeds as follows: %for this use case
+\begin{enumerate}
+  \item For every possible subsample of the signal, calculate $C_1$, that is the value of homogenuity within that subsection with the chosen cost fuction.
+  \item For every possible subsample of the signal that is long enough, calculate $C_2$, that is the two $C_1$ that cover the entire subsample and minimise the cost function.
+  \item Divide the signal in two so that the cost function is minimised by the sum of $C_2$ of the first section and $C_1$ of the second section. 
+\end{enumerate}
+
+A more thorough pseudocode for the algorithm is available in Truong et al. literature review \cite{truongSelectiveReviewOffline2020}.
+% TODO: how opt works differently when k > 2
+
+\begin{comment}
+  The basic principle for \texttt{Opt} with the number of change points being $k=2$ is the following.
+  % 1.
+  First, for every possible subsample of the signal, the value of homogenuity within that subsection $C_1$ is calculated with the chosen cost fuction.
+  % 2.
+  Second, for every subsample of the whole signal that has at least as many elements as there are segments divided by the change points, the split in two that minimises the cost function is chosen $C_2$, utilising the results from the first part.
+  % 3.
+  Lastly, the signal is divided in two so that the cost function is minimised by the sum of $C_2$ of the first section and $C_1$ of the second section. If there were more than two change points, that is $k > 2$, $C_2$-$C_k$ would be calculated in the second part and the third part would start with finding the minimising $C_{k-1}$ and $C_1$, and then for the first segment the minimising $C_{k-2}$ and $C_1$ etc.
+  \end{comment}
+
+\begin{comment}
+\texttt{Opt} process for this use case, that is for $k = 2$:
+\begin{enumerate}
+  \item calculate the cost function output $C_1$ for all possible subsamples
+  \item for all possible subsamples pick two $C_1$ that cover the entire subsample and minimize the cost function, these two $C_1$ subsamples form $C_2$
+  \item for the whole signal, pick $C_2$ and $C_1$ that minimize the cost function together
+\end{enumerate}
+\end{comment}
+
+% TODO: pelt
 
 % TODO: prioritize theoretical section 
 % TODO: check if median is not that good because there aren't that many outliers
@@ -179,9 +270,9 @@ Standard statistical methods for univariate analysis will be used for result eva
 
 In order to evaluate how well a method detects change points, a ground truth is needed for comparison. Ground truth can be obtained by having a person look at a video recording and having them write down the timestamps of the change points.
 
-I have collected the start and end times of the change points from 228 NPVR recordings by hand with a margin of error of $\pm$ 1 seconds. The sample consists of episodes from 14 different TV series. 138 of the sample recordings were broadcasted on non-commercial channels, and thus do not contain advertisement breaks. Some general information about these recordings is listed in Table \ref{tab:data_no_ads}. The rest 90 recordings with advertisement breaks are listed in Table \ref{tab:data_ads}. Every recording in the sample has at least one hundred user views.
+I have collected the start and end times of the credits from 279 NPVR recordings by hand with a margin of error of $\pm$ 1 seconds. The sample consists of episodes from 16 different TV series. 138 of the sample recordings were broadcasted on non-commercial channels, and thus do not contain advertisement breaks. Some general information about these recordings is listed in Table \ref{tab:data_no_ads}. The 141 recordings with advertisement breaks are listed in Table \ref{tab:data_ads}. Every recording in the sample has at least one hundred user views.
 
-\begin{table}[h]
+\begin{table}[H]
     \begin{center}
     \begin{tabular}{|p{15mm}|p{20mm}|p{28mm}|p{30mm}|} %{|c|c|c|c|}%
         \hline
@@ -202,15 +293,17 @@ I have collected the start and end times of the change points from 228 NPVR reco
     \label{tab:data_no_ads}
 \end{table}
 
-\begin{table}[h]
+\begin{table}[H]
     \begin{center}
     \begin{tabular}{|p{15mm}|p{20mm}|p{22mm}|p{28mm}|p{30mm}|} %{|c|c|c|c|c|}
         \hline
         \textbf{\# series} & \textbf{\# episodes} & \textbf{\# ad breaks} & \textbf{episode length} & \textbf{genre}  \\ \hline
-        11. & 35 & 1 & 30 min & soap opera\\ \hline
-        12. & 31 & 2 & 30 min & soap opera\\ \hline
-        13. & 15 & 1, 2 or 3 & 30-60 min & reality television\\ \hline
-        14. &  9 & 4 & 90 min & reality television\\ \hline
+        11. & 25 & 1 & 30 min & soap opera\\ \hline
+        12. & 35 & 1 & 30 min & soap opera\\ \hline
+        13. & 31 & 2 & 30 min & soap opera\\ \hline
+        14. & 26 & 3 & 50 min & drama\\ \hline
+        15. & 15 & 1, 2 or 3 & 30-60 min & reality television\\ \hline
+        16. &  9 & 4 & 90 min & reality television\\ \hline
     \end{tabular}
     \end{center}
     \caption{Sample recordings with advertisement breaks categorized by series}
@@ -223,19 +316,22 @@ I have collected the start and end times of the change points from 228 NPVR reco
 % constraint -> unknown K^* 
 
 % what is ruptures
-The \texttt{ruptures} Python library was used for the change point detection. \texttt{ruptures} is based on the findings of a literature reviw conducted by Truong et al. \cite{truongSelectiveReviewOffline2020} which examined various methods for offline change point detection. Selected algorithms examined in the literature review are implemented in \texttt{ruptures}.
+%The \texttt{ruptures} Python library was used for the change point detection. 
+Change points are detected from the sample data with the Python library \texttt{ruptures}.
+The library is based on the findings of the Truong et al. literature reviw \cite{truongSelectiveReviewOffline2020}. % which examined various methods for offline change point detection.
+Selected algorithms examined in the literature review are implemented in \texttt{ruptures}.
 
 % search method should be optimal 
 Choosing the most suitable algorithm %from the library
-for this use-case can be done by considering the three aspects of change detection methods discussed in the literature review: cost-function, search method and constraint. Accuracy is more important than low computational complexity, so optimal method is preferable to an approximate one. \texttt{ruptures} has two optimal search methods \texttt{Opt} and \texttt{Pelt}. %Pruned Exact Linear Time
-%The difference between them is that \texttt{Opt} works only when the number of change points is know beforehand, and \texttt{Pelt} is used when the number of change points is unknown. %decides the number of change points accoridng to a linear penalty constraint given by the user.
-\texttt{Opt} was first introduced by Bellman \cite{bellmanRoutingProblem1958} for an unrelated problem and \texttt{Pelt} was first indroduced by Killick et al. \cite{killickOptimalDetectionChangepoints2012}. 
+for this use-case can be done by considering the three aspects of change detection methods discussed in the literature review: cost function, search method and constraint. Accuracy is more important than low computational complexity, so optimal method is preferable to an approximate one. Two optimal search methods , \texttt{Opt} and \texttt{Pelt}, are implemented in \texttt{ruptures}, as described in section \ref{subsec:searchmethod}.
+%TODO: explain when to use opt nd when pelt
 
 % cost function
-The \texttt{ruptures} library supports three different cost functions that can be used with \texttt{Opt} and \texttt{Pelt}, $c_{L1}$, $c_{L2}$ and $c_{rbf}$.
+The \texttt{ruptures} library has three different cost functions that can be used with \texttt{Opt} and \texttt{Pelt}. These are least absolute deviation $c_{L1}$ as described in Equation \ref{eq:l1}, least squared deviation $c_{L2}$, also known as variance or quadratic error loss, as described in Equation \ref{eq:l2} and kernel cost function $c_{rbf}$. %Kernel cost function produced clearly worst results so its left out.
 %least absolute deviation, least squared deviation (variance), kernel cost function
-%TODO: explain why l2 is best
+%TODO: explain why l2 is best and which cost functions were tried
 
+% notation
 Following the convention used by Truong et al. the actual change points will be denoted by $t$ and the change points produced by \texttt{ruptures} will be denoted by $\hat{t}$ \cite{truongSelectiveReviewOffline2020}. Each change point has a subscript, where the first letter denotes the credits where the change point belongs to ($o$: opening credits, $c$: closing credits). If there are separate change points for the start and end timestamps of the credits, the subscript will have a second letter that denotes which one of those the change point represents ($s$: start, $e$: end). This notation is illustrated in Figure \ref{fig:change_point_notation}.
 
 \begin{figure}[H]
@@ -249,7 +345,23 @@ Following the convention used by Truong et al. the actual change points will be 
 
 \subsection{Non-commercial channels with \texttt{Opt} as search method} \label{sec:results_opt}
 
-Change points were calculated with \texttt{ruptures} for the 116 recordings without advertisement breaks listed in Table \ref{tab:data_no_ads}. The search method used was \texttt{Opt} with a fixed number of change points set to $k=2$. The cost function used was $c_{L_2}$ as given in equation \ref{eq:l2}. Statistics of the result are listed in Table \ref{tab:statistics_opt}.
+% output visualisation & comparison to ground truth fig
+% yleiskuva siitä millaista settiä rupturesta tulee ulos
+An example of \texttt{Opt} output with cost function $c_{L2}$ and number of change points $k=2$ is visualised in Figure \ref{fig:opt_sitcom}. The viewing behaviour data is the same as in Figure \ref{fig:sitcom_viewing_behaviour}. The difference between the figures is that in Figure \ref{fig:opt_sitcom} the vertical dashed lines mark the change points determined by \texttt{ruptures} instead of the actual change points checked by hand. Both of the predicted change points align with the credits. The change point for the end of the program is close to the beginning of the closing credits and the change point for the start of the program is in the middle of the opening credits.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=1\textwidth]{../plots/sitcom-pelt_l2_pen30000.pdf}
+  \caption{\texttt{Opt} $c_{L2}$ output for Figure \ref{fig:sitcom_viewing_behaviour} data}
+  \label{fig:opt_sitcom}
+\end{figure}
+
+Running \texttt{Opt} $c_{L2}$ $k=2$ for Table \ref{tab:data_no_ads} recordings, it turns out that the predicted change points usually land somewhere on the credits. Out of the 138 recordings, the first change point landed outside of opening credits in 23 recordings
+and the second change point was not on the closing credits in one recording. More statistics of the result are listed in Table \ref{tab:statistics_opt}.
+%TODO: explain table more
+%the output similar to the above description is the most common result. 
+
+%Change points were calculated with \texttt{ruptures} for the 138 recordings without advertisement breaks listed in Table \ref{tab:data_no_ads}. The search method used was \texttt{Opt} with a fixed number of change points set to $k=2$. The cost function used was $c_{L_2}$ as given in equation \ref{eq:l2}. Statistics of the result are listed in Table \ref{tab:statistics_opt}.
 
 \begin{table}[h]
     \begin{center}
@@ -269,9 +381,23 @@ Change points were calculated with \texttt{ruptures} for the 116 recordings with
     \label{tab:statistics_opt}
 \end{table}
 
-Both \texttt{Opt} and \texttt{Pelt} are optimal search methods, meaning that with the same cost function the output produced by the methods is identical, if the number of change points predicted by \texttt{Pelt} happens to be the same that was given as a parameter $k$ to \texttt{Opt}. For example, the \texttt{Opt} $c_{L_2}$ output with $k=2$ for Figure \ref{fig:sitcom_viewing_behaviour} data is visualised in Figure \ref{fig:pelt_sitcom}.
+On some episodes of series 6. in Table \ref{tab:data_no_ads}, the opening credits occur few minutes after the beginning of the program. For those episodes I set the ground truth opening credits change points $t_{os}$ and $t_{oc}$ to the beginning of the program instead of the actual start and end time of the opening credits. The reasoning behind this was the assumption that an average viewer does not want to miss the first minute or two of the program. However, for two of these recordings \texttt{Opt} $c_{L2}$ $k=2$ predicted the first change point closer to the opening credits than the start of the program. This explains the large maximum value for $\hat{t}_o-t_{oe}$ in Table \ref{tab:statistics_opt}. Without these two outliers the maximum value for $\hat{t}_o-t_{oe}$ would be 11.
+%TODO: check in how many episodes exactly
 
-\begin{figure}[H]
+%The results are visualised in Figure \ref{fig:t_diff_opt_credits}. 
+The five-number summary of the quartiles in Table \ref{tab:statistics_opt} gives some insight about the output, but the results can be understood more intuitively by plotting the data.
+Plotted in Figure \ref{fig:t_diff_opt_credits} are the predicted locations for opening and closing credits, $\hat{t}_o$ and $\hat{t}_c$, compared to the actual start and end times of the credits. Figure \ref{fig:t_diff_opt_os} has $\hat{t}_o-t_{os}$ values plotted, Figure \ref{fig:t_diff_opt_oe} has $\hat{t}_o-t_{oc}$ values plotted, et cetera.
+%TODO: write about the outlier here and how "start credits" are defined earlier in the thesis %TODO: define start credits earlier in this thesis
+
+In order to gain more insight about the %nature of the
+results, the output change points were divided into two populations, depending on whether the predicted change point $\hat{t}$ is closer to the start or the end of the credits. % it represents.
+For the opening credits it seems that $\hat{t_o}$ typically falls in the middle of the credits  and aligns closely to neither $t_{os}$ or $t_{oc}$. %, but rarely lands outside of the credits.
+%TODO: write about the outlier here and how "start credits" are defined earlier in the thesis %TODO: define start credits earlier in this thesis
+
+For the closing credits, it is visible in Figure \ref{fig:t_diff_opt_cs} and \ref{fig:t_diff_opt_ce} that most often $\hat{t}_c$ is very close to $t_{cs}$, although with a delay of few seconds. %When $\hat{t}_c$ is more than 10 seconds away from $t_{cs}$ it is typical that it actually aligns to $t_{ce}$ with an accuracy of $\sim \pm 20 s$. 
+Another detail worth noting is that although three fourths of the sample $\hat{t}_c$ results are within $8$ $s$ from $t_{cs}$, for all samples it holds that $ \hat{t}_c > t_{cs}$, meaning that $\hat{t}_c$ is never predicted to be before the closing creidts.
+
+\begin{figure}[h]
   \begin{subfigure}[t]{.49\textwidth}
     \centering
     \includegraphics[width=\linewidth]{../plots/distances/opt_l2_dist_start_first.pdf}
@@ -303,58 +429,31 @@ Both \texttt{Opt} and \texttt{Pelt} are optimal search methods, meaning that wit
 
 \subsection{All channels with \texttt{Pelt} as search method} \label{sec:results_pelt}
 
+Both \texttt{Opt} and \texttt{Pelt} are optimal search methods, meaning that with the same cost function the output produced by the methods is identical, if the number of change points predicted by \texttt{Pelt} happens to be the same that was given as a parameter $k$ to \texttt{Opt}. For example, if \texttt{Pelt} $c_{L_2}$ happened to predict $k=2$ change points for all Table \ref{tab:data_no_ads} recordings the results would be identical to what is presented in section \ref{sec:results_opt}.
+
 % output visualisation & comparison to ground truth fig
 % yleiskuva siitä millaista settiä rupturesta tulee ulos
-An example of \texttt{Pelt} output with cost function $c_{L2}$ is visualised in Figure \ref{fig:ruptures_change_detection}. The viewing behaviour data is the same as in Figure \ref{fig:user_viewing_behaviour}. The difference between the figures is that in Figure \ref{fig:ruptures_change_detection} the vertical dashed lines mark the change points determined by \texttt{ruptures} instead of the actual change points checked by hand. From the figure it can be seen, that the start and end times of advertisement breaks are quite accurate, but for the opening and closing credits only one change point was found. The change point for the closing credits seems to align with the beginning of the credits and the change point for the opening credits is in the middle of the credits.
+%An example of \texttt{Pelt} output with cost function $c_{L2}$ is visualised in Figure \ref{fig:ruptures_change_detection}. The viewing behaviour data is the same as in Figure \ref{fig:user_viewing_behaviour}. The difference between the figures is that in Figure \ref{fig:ruptures_change_detection} the vertical dashed lines mark the change points determined by \texttt{ruptures} instead of the actual change points checked by hand. From the figure it can be seen, that the start and end times of advertisement breaks are quite accurate, but for the opening and closing credits only one change point was found. The change point for the closing credits seems to align with the beginning of the credits and the change point for the opening credits is in the middle of the credits.
 
-\begin{figure}[H]
-    \par\bigskip
-    \centering
-    \begin{subfigure}[b]{\textwidth}
-       \includegraphics[width=1\textwidth]{../plots/sitcom-pelt_l2_pen30000.pdf}
-       \caption{\texttt{Pelt} $c_{L2}$ output for Figure \ref{fig:sitcom_viewing_behaviour} data}
-       \label{fig:pelt_sitcom} 
-    \end{subfigure}
-    \par\bigskip
-    \begin{subfigure}[b]{\textwidth}
-       \includegraphics[width=1\textwidth]{../plots/soap_opera-pelt_l2_pen30000.pdf}
-       \caption{\texttt{Pelt} $c_{L2}$ output for Figure \ref{fig:soap_opera_viewing_behaviour} data}
-       \label{fig:pelt_soap_opera}
-    \end{subfigure}
-    \caption{\texttt{Pelt} $c_{L2}$ output for Figure \ref{fig:user_viewing_behaviour} data}
-    \label{fig:ruptures_change_detection}
-\end{figure} 
-
-Trying \texttt{Pelt} $c_{L2}$ for Table \ref{tab:data_no_ads} and \ref{tab:data_ads} recordings, it turns out that the output similar to the above description is the most common result. Typical number of change points in the output can be defined as:
-\begin{equation}
-    k_{typical}=2+2n_{ads}
-    \label{eq:k_typical}
-\end{equation}
-
-where $n_{ads}$ is the number of advertisement breaks in the recording.
-
-Occasionally the output differs from the default, by the number of change points $k$ being other than $k_{typical}$. An example of this kind of result is visualised in Figure \ref{fig:ruptures_wrong_k}. In Figure \ref{fig:pelt_too_few} the change points for the two centremost advertisement breaks were not found. In Figure \ref{fig:pelt_too_many} there is an extra change point in the middle of the core program content. Both example results are worse than the expected result with $k_{typical}$ change points. Nevertheless, it is possible for a result with $k > k_{typical}$ to be better than the defalt result, by having separate change points for the start and end of credits. Unfortunately, there is no trivial method to determine whether an extra change point in \texttt{Pelt} output with $k > k_{typical}$ is incorrect, or if it corresponds to an actual change point. In order to make evaluation more straigthforward, \texttt{Pelt} output with atypical number of change points will be discarded from further analysis.
-
-\begin{figure}[H]
-    \centering
-    \begin{subfigure}[b]{\textwidth}
-       \includegraphics[width=1\textwidth]{../plots/too_few_k.pdf}
-       \caption{Too few change points}
-       \label{fig:pelt_too_few} 
-    \end{subfigure}
-    \par\bigskip
-    \begin{subfigure}[b]{\textwidth}
-       \includegraphics[width=1\textwidth]{../plots/too_many_k.pdf}
-       \caption{Too many change points}
-       \label{fig:pelt_too_many}
-    \end{subfigure}
-    \caption{\texttt{Pelt} $c_{L2}$ output with incorrect number of change points}
-    \label{fig:ruptures_wrong_k}
-\end{figure} 
+\begin{comment}
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=1\textwidth]{../plots/soap_opera-pelt_l2_pen30000.pdf}
+  \caption{\texttt{Pelt} $c_{L2}$ output for Figure \ref{fig:soap_opera_viewing_behaviour} data}
+  \label{fig:pelt_soap_opera}
+\end{figure}
+\end{comment}
 
 %testattiin eri penalty arvolla ja otettiin tarkempaan tutkimukseen se penalty jolla saatiin eniten k oikein
-Change points were calculated with \texttt{Pelt} as the search method and $c_{L_2}$ as the cost function for all of the 206 recordings listed in Table \ref{tab:data_no_ads} and \ref{tab:data_ads}. For each recording the change point detection was done with nine different penalty values, ranging from 10000 to 90000, with an increase of 10000 between each value. Listed in Table \ref{tab:penalty_k} is the number of recordings $n_{k_{typical}}$ where $k=k_{typical}$ for each penalty. From the table it can be seen that penalty of 70000 produced most conistently the expected number of change points $nk_{typical}$, by having $k=nk_{typical}$ for 201 recordings out of 206 recordings. The results with penalty of 70000 will be discussed in more detail below. Statistics of the result with \texttt{Pelt} $c_{L_2}$, penalty=70000 are listed in Table \ref{tab:statistics_pelt}.
+Change points were calculated with \texttt{Pelt} as the search method and $c_{L_2}$ as the cost function for all of the 279 recordings listed in Table \ref{tab:data_no_ads} and \ref{tab:data_ads}. %For each recording the change point detection was done with nine different penalty values, ranging from 10000 to 90000, with an increase of 10000 between each value. Listed in Table \ref{tab:penalty_k} is the number of recordings $n_{k_{typical}}$ where $k=k_{typical}$ for each penalty. From the table it can be seen that penalty of 70000 produced most conistently the expected number of change points $nk_{typical}$, by having $k=nk_{typical}$ for 201 recordings out of 206 recordings. The results with penalty of 70000 will be discussed in more detail below.
+Statistics of the results %with \texttt{Pelt} $c_{L_2}$, penalty=70000
+are listed in Table \ref{tab:statistics_pelt}.
+The results are plotted in Figure \ref{fig:t_diff_credits} in a similar way as the \texttt{Opt} results in Figure \ref{fig:t_diff_opt_credits}. The results appear to be quite similar to the \texttt{Opt} results.
 
+%Out of the 206 recordings, $\hat{t}_o$ is somewhere on the opening credits in 180 recordings and $\hat{t}_e$ is somewhere on the closing credits in 199 recordings. 
+%That means the approximate location of the opening credits was predicted correctly in $87\%$ of the sample recordings and the approximate location of the closing credits was predicted correctly in $97\%$ of the sample recordings.
+
+\begin{comment}
 \begin{table}[H]
     \begin{center}
     \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
@@ -366,57 +465,31 @@ Change points were calculated with \texttt{Pelt} as the search method and $c_{L_
     \caption{Penalty value and the number of recordings with $k_{typical}$ change points}
     \label{tab:penalty_k}
 \end{table}
+\end{comment}
 
-\begin{table}[H]
+\begin{table}[h]
     \begin{center}
-    \begin{tabular}{|c|c|c|c|c|c|c|}
+    \begin{tabular}{|c|c|c|c|c|}
         \hline
-        \textbf{statistic} & $\hat{t}_o-t_{os}$ & $\hat{t}_o-t_{oe}$ & $\hat{t}_c-t_{cs}$ & $\hat{t}_o-t_{os}$ & $\hat{t}_{as}-t_{as}$ & $\hat{t}_{ae}-t_{ae}$  \\ \hline
-        sample size &  206 & 206 & 206 & 206 & 328 & 328 \\ \hline
-        minimum & -18 & -166 & 2 & -107 & -12 & -20\\ \hline
-        1st quartile & 9 & -20 & 5 & -46 & 0 & -6\\ \hline
-        median & 20 & -9 & 7 & -30 & 3 & 0\\ \hline
-        3rd quartile & 38 & -5,25 & 9 & -23 & 5 & 7\\ \hline
-        maximum & 157 & 152	& 136 & 14 & 8 & 23\\ \hline
-        variance & 497 & 726 & 227 & 896 & 15,3 & 75,0\\ \hline
-        standard deviation & 22,3 & 27,0 & 15,1 & 29,9 & 3,91 &	8,66\\ \hline
+        \textbf{statistic} & $\hat{t}_o-t_{os}$ & $\hat{t}_o-t_{oe}$ & $\hat{t}_c-t_{cs}$ & $\hat{t}_o-t_{os}$ \\ \hline
+        %sample size &  206 & 206 & 206 & 206 \\ \hline
+        minimum & -18 & -166 & 2 & -107 \\ \hline
+        1st quartile & 9 & -20 & 5 & -46 \\ \hline
+        median & 20 & -9 & 7 & -30 \\ \hline
+        3rd quartile & 38 & -5,25 & 9 & -23 \\ \hline
+        maximum & 157 & 152	& 136 & 14 \\ \hline
+        variance & 497 & 726 & 227 & 896 \\ \hline
+        standard deviation & 22,3 & 27,0 & 15,1 & 29,9 \\ \hline
     \end{tabular}
     \end{center}
-    \caption{Five-number summary and other statistics for \texttt{Pelt} $c_{L2}$, penalty=70000}
+    \caption{Five-number summary and other statistics for \texttt{Pelt} $c_{L2}$}
     \label{tab:statistics_pelt}
 \end{table}
 
-The five-number summary of the quartiles in Table \ref{tab:statistics_pelt} gives some insight about the output, but the results can be understood more intuitively by plotting the data. Plotted in Figure \ref{fig:t_diff_ads} is the difference between the actual and predicted change points for all of the advertisement breaks in Table \ref{tab:data_ads} recordings. Figure \ref{fig:t_diff_ads_start} shows the differences in the start time $\hat{t}_{as}-t_{as}$ and Figure \ref{fig:t_diff_ads_end} shows the differences in the end time $\hat{t}_{ae}-t_{ae}$. 
-
-Start of advertisement break $\hat{t}_{as}$ tends to be predicted more accurately than the end $\hat{t}_{ae}$, as the range for $\hat{t}_{as}-t_{as}$ is $\sim \pm 10 s$ and it also has lower variance than $\hat{t}_{ae}-t_{ae}$. The range for $\hat{t}_{ae}-t_{ae}$ is $\sim \pm 20 s$. It is also worth noting that the distribution for $\hat{t}_{as}$ is a few seconds off from the midpoint $\hat{t}_{as}-t_{as}=0$, whereas for $\hat{t}_{ac}$ the values are distributed more evenly around $\hat{t}_{ac}-t_{ac}=0$.
-
-\begin{figure}[H]
-    \begin{subfigure}[t]{.49\textwidth}
-      \centering
-      \includegraphics[width=\linewidth]{../plots/distances/pelt_l2_dist_ads_first.pdf}
-      \caption{Start of advertisement break}
-      \label{fig:t_diff_ads_start}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[t]{.49\textwidth}
-      \centering
-      \includegraphics[width=\linewidth]{../plots/distances/pelt_l2_dist_ads_last.pdf}
-      \caption{End of advertisement break}
-      \label{fig:t_diff_ads_end}
-    \end{subfigure}
-    \caption{\texttt{Pelt} $c_{L2}$ output compared to actual change points of advertisement breaks}
-    \label{fig:t_diff_ads}
-\end{figure}
-
-Plotted in Figure \ref{fig:t_diff_credits} are the predicted locations for opening and closing credits, $\hat{t}_o$ and $\hat{t}_c$, compared to the actual start and end times of the credits. Figure \ref{fig:t_diff_os} has $\hat{t}_o-t_{os}$ values plotted, Figure \ref{fig:t_diff_oe} has $\hat{t}_o-t_{oc}$ values plotted, et cetera. The results are not as close to the normal distribution as the results for the advertisement breaks in Figure \ref{fig:t_diff_ads}.
-
-In order to gain more insight about the nature of the results, the output change points were divided into two populations, depending on whether the predicted change point $\hat{t}$ is closer to the start or the end of the change segment it represents. For the opening credits it seems that $\hat{t_o}$ typically falls in the middle of the credits  and aligns closely to neither $t_{os}$ or $t_{oc}$. %, but rarely lands outside of the credits.
-%TODO: write about the outlier here and how "start credits" are defined earlier in the thesis %TODO: define start credits earlier in this thesis
-
-For the closing credits, it is visible in Figure \ref{fig:t_diff_cs} and \ref{fig:t_diff_ce} that most often $\hat{t}_c$ is very close to $t_{cs}$, although with a delay of few seconds. When $\hat{t}_c$ is more than 10 seconds away from $t_{cs}$ it is typical that it actually aligns to $t_{ce}$ with an accuracy of $\sim \pm 20 s$. Another detail worth noting is that although three fourths of the sample $\hat{t}_c$ results are within $9 s$ from $t_{cs}$, for all samples it holds that $ \hat{t}_c > t_{cs}$, meaning that $\hat{t}_c$ is never predicted to be before the closing creidts.
+%For the closing credits, it is visible in Figure \ref{fig:t_diff_cs} and \ref{fig:t_diff_ce} that most often $\hat{t}_c$ is very close to $t_{cs}$, although with a delay of few seconds. When $\hat{t}_c$ is more than 10 seconds away from $t_{cs}$ it is typical that it actually aligns to $t_{ce}$ with an accuracy of $\sim \pm 20 s$. Another detail worth noting is that although three fourths of the sample $\hat{t}_c$ results are within $9 s$ from $t_{cs}$, for all samples it holds that $ \hat{t}_c > t_{cs}$, meaning that $\hat{t}_c$ is never predicted to be before the closing creidts.
 
 %TODO: same axis to figures?
-\begin{figure}[H]
+\begin{figure}[h]
     \begin{subfigure}[t]{.49\textwidth}
       \centering
       \includegraphics[width=\linewidth]{../plots/distances/pelt_l2_dist_start_first.pdf}
@@ -446,18 +519,15 @@ For the closing credits, it is visible in Figure \ref{fig:t_diff_cs} and \ref{fi
     \label{fig:t_diff_credits}
 \end{figure}
 
-Out of the 206 recordings, $\hat{t}_o$ is somewhere on the opening credits in 180 recordings and $\hat{t}_e$ is somewhere on the closing credits in 199 recordings. 
-That means the approximate location of the opening credits was predicted correctly in $87\%$ of the sample recordings and the approximate location of the closing credits was predicted correctly in $97\%$ of the sample recordings.
-
 \section{Discussion} \label{sec:discussion}
 
 % correctly identifying number of changepoints is difficult
-It is non-trivial to find a universal solution that works regardless of the number of advertisemet breaks and the length of the recording. When linear constraint is used, like in \texttt{Pelt}, most likely a different penalty value would be optimal for non-commercial and commercial channels. Also better result could maybe be achieved if the penalty value was chosen as a function of the recording length. Another approach to solve the number of change points issue could be combining multiple models, for example Bayesian methods or analog to binary signal processing could be used along \texttt{Pelt}.
+%It is non-trivial to find a universal solution that works regardless of the number of advertisemet breaks and the length of the recording. When linear constraint is used, like in \texttt{Pelt}, most likely a different penalty value would be optimal for non-commercial and commercial channels. Also better result could maybe be achieved if the penalty value was chosen as a function of the recording length. Another approach to solve the number of change points issue could be combining multiple models, for example Bayesian methods or analog to binary signal processing could be used along \texttt{Pelt}.
 
 % is there a difference between different programs or program types?
 % how unconventional program structure affects things
-There seems to be some differences in the results between different kinds of programs. One of the recordings with $k=k_{typical}$ had $\hat{t}_o$ very much off compared to $t_o$ because the recording in question happened to have a slightly
-unconventional program structure of having opening credits in the middle of the core program content a few minutes in the program. The approach of using user behaviour for change segment detection most likely works best for recordings with a conventional structure with clearly separated interesting and uninteresting content. Structural things that are likely to cause problems for this method are for example opening credits that are not located at the very begining, credits embedded to core program content, recapitulations of previous episodes, sneak peeks of future episodes, especially at the end of closing credits.
+There seems to be some differences in the results between different kinds of programs. %One of the recordings with $k=k_{typical}$ had $\hat{t}_o$ very much off compared to $t_o$ because the recording in question happened to have a slightlyunconventional program structure of having opening credits in the middle of the core program content a few minutes in the program.
+The approach of using user behaviour for change segment detection most likely works best for recordings with a conventional structure with clearly separated interesting and uninteresting content. Structural things that are likely to cause problems for this method are for example opening credits that are not located at the very begining, credits embedded to core program content, recapitulations of previous episodes, sneak peeks of future episodes, especially at the end of closing credits.
 
 % pruning (& sample size)
 % data needs to be pruned a bit to get more accurate results
@@ -483,9 +553,8 @@ Another thing that would benefit from more consideration, is choosing how to cle
 %etenkin lopputekstin alku löytyy yleensä hyvin, tosin pitää huomioida videoiden väliset erot
 The goal of this thesis was to study whether the opening and closing credits and advertisement breaks can be identified from an NVPR recording based solely on user viewing behaviour data. The verdict is that in most cases the general location of an change segment can be found with a reasonable accuracy. However, identifying more exact locations of change points is more difficult. It seems that locating the start of closing credits and the change points for advertisement breaks might be viable, but the end of closing credits and exact start and end for opening credits cannot likely be detected solely from user viewing behaviour.
 
-The accuracy of the results might be improved by considering the differences between different programs and channels. User viewing behaviour is more useful for programs with a typical and predictable structure. If some extra assumptions about the recording structure can be made, it might make it possible to identify non-program content based on user viewing behaviour, despite some change points missing. For example, closing credits length is typically a few minutes at maximum.
+The accuracy of the results might be improved by considering the differences between different programs and channels. User viewing behaviour is more useful for programs with a typical and predictable structure. %If some extra assumptions about the recording structure can be made, it might make it possible to identify non-program content based on user viewing behaviour, despite some change points missing. For example, closing credits length is typically a few minutes at maximum.
 %This is something that could be considered in further research. 
-
 For better results it might also be worth considering, if user viewing behaviour based change point detection could be combined with other methods for change point detection. %Some possible future applications might be ...
 
 %TODO: check book citation format (tukey)
