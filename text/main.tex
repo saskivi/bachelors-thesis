@@ -32,6 +32,7 @@
 
 \usepackage{caption}
 \usepackage{subcaption}
+\usepackage{verbatim} % comment block
 
 % Koko dokumentin kattavia asetuksia:
 
@@ -103,16 +104,15 @@
 
 % Otsikko nimiölehdelle. Yleensä sama kuin seuraavana oleva \TITLE, 
 % mutta jos nimiölehdellä tarvetta "kaksiosaiselle" kaksiriviselle
-\title{Video change point detection based on viewing statistics}
-%\title{Utilisation of viewing statistics to detect change points in NPVR}
+\title{Utilisation of viewing statistics in \\[5mm] video recording credits detection}
 % 2-osainen otsikko:
 %\title{\LaTeX{}-pohja kandidaatintyölle \\[5mm] Pitkiä rivejä kokeilun vuoksi.}
 
 % Otsikko tiivistelmään. Jos lisäksi engl. tiivistelmä, niin viimeisin:
-\TITLE{Lopputekstien paikannus NPVR tallenteesta katsomistilastoja hyödyntäen}
+\TITLE{Videotallenteen alku- ja lopputekstien paikannus\\ katsomistilastojen perusteella}
 %\TITLE{\LaTeX{} för kandidatseminariet med jättelång rubrik som fortsätter och
 % fortsätter ännu}
-\ENTITLE{Utilisation of viewing statistics in detecting NPVR closing credits}
+\ENTITLE{Utilisation of viewing statistics in video recording credits detection}
 % 2-osainen otsikko korvataan täällä esim. pisteellä:
 %\TITLE{\LaTeX{}-pohja kandidaatintyölle. Pitkiä rivejä kokeilun vuoksi.}
 
@@ -137,7 +137,7 @@
 % 
 % Jos tiivistelmä englanniksi, niin:
 \ENSUPERVISOR{Assistant Professor Parinya Chalermsook}
-\ENINSTRUCTOR{Wanchote Jiamjitrak, M.Sc. (Tech)}
+\ENINSTRUCTOR{Wanchote Jiamjitrak, M.Sc. (Tech)\\}
 % M.Sc. (Tech)  // M.Sc. (Eng)
 % Lic.Sc. (Tech)
 % D.Sc. (Tech)   // FT filosofian tohtori, PhD Doctor of Philosophy
@@ -153,8 +153,8 @@
 
 % Avainsanat tiivistelmään. Tarvittaessa myös englanniksi:
 
-\KEYWORDS{muutospisteiden havaitseminen, }
-\ENKEYWORDS{change point detection, }
+\KEYWORDS{muutospisteiden havaitseminen, segmentaatio,\\ tilastollinen signaalinkäsittely, NVPR}
+\ENKEYWORDS{change point detection, segmentation,\\ statistical signal processing, NVPR}
 
 % Tiivistelmään tulee opinnäytteen sivumäärä.
 % Kirjoita lopulliset sivumäärät käsin tai kokeile koodia. 
