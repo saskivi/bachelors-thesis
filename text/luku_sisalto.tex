@@ -128,31 +128,44 @@ Lastly views with implausible player source duration are removed. This includes 
 % offline -> number of changes known/unknown
 
 %tie to npvr case & definition
-Locating video content changes from user viewing behaviour time series data can be formulated as a signal processing problem, more precisely as a change point detection problem. Signal change point detection is quite widely researched topic, since it has applications in multiple fileds such as network traffic data analysis \cite{levy-leducDetectionLocalizationChangepoints2009} \cite{lung-yut-fongDistributedDetectionLocalization2012}, bio-informatics \cite{liuChangepointDetectionMethod2018} \cite{vertFastDetectionMultiple2010} and climatology \cite{reevesReviewComparisonChangepoint2007} \cite{verbesseltDetectingTrendSeasonal2010a}.
+Locating video content changes from user viewing behaviour time series data can be formulated as a signal processing problem, more precisely as a change point detection problem. %Signal change point detection is quite widely researched topic, since it has applications in multiple fileds such as network traffic data analysis \cite{levy-leducDetectionLocalizationChangepoints2009} \cite{lung-yut-fongDistributedDetectionLocalization2012}, bio-informatics \cite{liuChangepointDetectionMethod2018} \cite{vertFastDetectionMultiple2010} and climatology \cite{reevesReviewComparisonChangepoint2007} \cite{verbesseltDetectingTrendSeasonal2010a}.
 % TODO: add examples and check that the papers make sense
-There are also other possible approaces for time series change point detection, including Bayesian approaches, but in order to narrow down the scope of this thesis they wont be examined.
+The signal in this case is the timeseries data of user viewing behaviour, as described in section \ref{sec:data}. % and visualised in Figure \ref{fig:user_viewing_behaviour}.
+The assumption in signal change point detection is that the signal consists of segments with different statistical properties, for example a different central tendency. Change points are the transition points between segments. %where the statistical properties change
+However, signal processing is not the only possible approach for time series change point detection. Statistical approaces, such as Bayesian methods, are also widely used, but in order to narrow down the scope of this thesis they wont be examined.
 % TODO: tarkista onko bayes laskennallisesti raskaampi, oletus on et on
 % statistical vs signal processing approaches
 % global / sliding window / bottom up / top down
 % pitäiskö selittää miks naiivit menetelmät ei oo riittäviä
 
 % offline
-Change point detection problems can be divided into two main categories, depending on whether the change detection must be done for incoming data in near real-time, or not. Methods solving the former case are referred to as online algorithms. Offline algorithms solve the latter case, and they differ from the online algorithms by getting the entire dataset as input and typically being more computationally complex, but also by detecting the changes more accurately. The user viewing behaviour data is aggregated from multiple views after the views have ended, meaning that all of the data to be analysed is available from the start, allowing offline methods to be used for change point detection.
+Signal change point detection problems can be divided into two main categories, depending on whether the change detection must be done for incoming data in near real-time, or not. Methods solving the former case are referred to as online algorithms. Offline algorithms solve the latter case, and they differ from the online algorithms by getting the entire dataset as input and typically being more computationally complex, but also by detecting the changes more accurately. The user viewing behaviour data is aggregated from multiple views after the views have ended, meaning that all of the data to be analysed is available from the start, allowing offline methods to be used for change point detection.
 %TODO: citations, rewrite
 
-% number of change points
-Offline % (signal) change point detection
-methods can be divided into two categories, based on whether the number of change points in the signal, %dataset
-$k$, is known beforehand, or not. If $k$ %the number of change points
-is unknown, an extra step is needed to determine it. There are multiple methods for doing this. Examining the data in section \ref{sec:data}, based on human observation it would be reasonable to assume that a singe change point can be found quite reliably for the opening and closing credits. However, advertisement breaks can also produce notable drops in the number of views which may be interpreted as change points, so if the recording might contain them the number of change points cannot be known in advance.
-
 % paperi, cost function ja seatch method
-Literature review by Truong et al. \cite{truongSelectiveReviewOffline2020} compared different offline change point detection methods. It classified change point detection methods according to how the homogenuity of a signal segment is measured, and how the segments where to evaluate the homogenuity are chosen from the signal. The measure of homogenuity is referred to as \textit{cost function} and the way to choose the segments is referred to as \textit{search method}. These are discussed in more detail in sections \ref{subsec:costfunction} and \ref{subsec:searchmethod}.
+Literature review by Truong et al. \cite{truongSelectiveReviewOffline2020} compared different offline change point detection methods. It classified the methods according to how the homogenuity of a signal segment is measured, and how the segments where to evaluate the homogenuity are chosen from the signal. The measure of homogenuity is referred to as \textit{cost function} and the way to choose the segments is referred to as \textit{search method}. %These are discussed in more detail in sections \ref{subsec:costfunction} and \ref{subsec:searchmethod}.
 %The paper identified three components that are present in all change 
 %classified change point detection methods according to three criteria. 
 % search methods
 % cost functions
 % constraint functions when k is unknown
+%"sum of costs of all the segments that define the segmentation"
+The objective of change point detection algorithms %discussed in the literature review
+is to find the segmentation that minimises the sum of the cost function outputs of the segments. % in the segmentation.
+The function to be minimised can be expressed as follows:
+\begin{equation} % 
+  \sum_{k=0} ^{K}  c(y_{ (t_k . t_{k+1} )})
+  \label{eq:minimise_segments}
+\end{equation}
+where $y_{ (t_k . t_{k+1} )}$ is a segment of the signal from index $t_k+1$ to $t_{k+1}$, $t_{k+n}$ is the index of the $n$th change point, $c$ is the cost function and $K$ is the number of change points.
+
+% number of change points
+Offline % (signal)
+change point detection
+methods can be divided into two categories, based on whether the number of change points in the signal, %dataset
+$K$, is known beforehand, or not. If $K$ %TODO: reword
+is unknown, a constraint on the number of change points needs to be added. This is refferred to as the \textit{complexity penalty}. Similar to cost function and search method, there are multiple alternative complexity penalties that can be used.
+Examining the data in section \ref{sec:data}, based on human observation it would be reasonable to assume that a single change point can be found quite reliably for the opening and closing credits. However, advertisement breaks can also produce notable drops in the number of views which may be interpreted as change points, so if the recording might contain them the number of change points cannot be known in advance.
 
 % seuraavaksi esitellään search methodien toimintaperiaatteet ja käytetyt cost functionit
 
@@ -179,7 +192,7 @@ where $y_{a.b}$ is a segment from signal $y$ from index $a$ to $b$, and  $\overl
 \end{equation}
 \end{comment}
 
-Another possibly suitable cost function for the data is the least absolute deviation $c_{L_1}$. It detects changes in the median and can be used also for detecting shifts of other central points such as mean and mode. It is defined as follows:
+Another possibly suitable cost function for the data is the least absolute deviation $c_{L_1}$. It detects changes in the median and can be used also for detecting shifts in other central tendencies, such as mean and mode. It is defined as follows:
 % ruptures documentation for L1: This cost function detects changes in the median of a signal. Overall, it is a robust estimator of a shift in the central point (mean, median, mode)
 \begin{equation} % paper style?
   c_{L_1}(y_{a.b}) = \sum^b_{t=a+1} \left\lVert y_t-\overline{y}_{a.b} \right\rVert_1
@@ -194,25 +207,57 @@ Another possibly suitable cost function for the data is the least absolute devia
 
 \subsection{Search method} \label{subsec:searchmethod}
 
-% optimal vs approximate
-The literature review divided search methods into two categories, by whether they provide always an optimal solution for change point location with the chosen cost function, or if they provide an approximate solution. There is typically a tradeoff between more accurate results and lower computational complexity.
+% optimal vs approximate, why optimal only
+Truong et al. \cite{truongSelectiveReviewOffline2020} divided search methods into two categories, by whether they provide always an optimal solution for change point location with the chosen cost function, or if they provide an approximate solution. This thesis will examine only optimal methods. Optimal methods produce inherently more reliable and accurate results that approximate ones, with the tradeoff of typically higher computational complexity. The approximate methods are excluded on the basis that the goal of this thesis is to study whether it is at all possible to detect credits from solely viewing behaviour statistics, not determining the most viable approach to do it in practice. Thus high reliablity and accuracy outweights low computational complexity.
+%This thesis will focus only on these two optimal methods. Approximate methods might be sufficient for this change point detection task, but as the goal of this thesis is to study whether credits can be detected from solely viewing behaviour statistics, and the focus is in whether the idea is viable in general, and not in finding the best way to do it in practice, considering what wold be a the desired accuracy, speed and reliability of the solution. 
 
-Two optimal search methods were presented in the literature review, \texttt{Opt} and \texttt{Pelt}. \texttt{Opt} was first introduced by Bellman \cite{bellmanRoutingProblem1958} for an unrelated problem. \texttt{Pelt}, short for Pruned Exact Linear Time, was first indroduced by Killick et al. \cite{killickOptimalDetectionChangepoints2012}. The main difference between the methods is that \texttt{Opt} requires the number of change points $k$ to be known beforehand, and \texttt{Pelt} can be used when $k$ is unknown. 
+% (un)known k
+Two optimal search methods were presented in the literature review, \texttt{Opt} and \texttt{Pelt}. \texttt{Opt} was first introduced by Bellman \cite{bellmanRoutingProblem1958} for an unrelated problem. \texttt{Pelt}, short for Pruned Exact Linear Time, was first indroduced by Killick et al. \cite{killickOptimalDetectionChangepoints2012}. The main difference between the methods is that \texttt{Opt} requires the number of change points $K$ to be known beforehand, and \texttt{Pelt} can be used when $K$ is unknown. 
 % decides the number of change points accoridng to a linear penalty constraint given by the user.
 
+%dynamic programming
+%Both of the methods use dynamic programming and their core idea is somewhat the same
+Both of the methods %are similar in that they
+use dynamic programming to find the change points. Dynamic programming is a mathematical optimisation method, where the problem is solved by recursively dividing it into smaller subproblems. In this case the problem is minimising equation \ref{eq:minimise_segments}. The observation that enables a dynamic programming approach is that:
+\begin{equation}
+  \text{min} \left[ \sum_{k=0} ^{K}  c(y_{ (t_k . t_{k+1} )}) \right] = 
+  \text{min}\Bigg\{
+    c(y_{(0.t_1)}) + 
+    \text{min} \left[ \sum_{k=1} ^{K}  c(y_{ (t_k . t_{k+1} )}) \right] 
+  \Bigg\}
+  \label{eq:dynp}
+\end{equation}
+Equation \ref{eq:dynp} means that
+the minimisation problem for the sum of costs for all segments in an optimal segmentation, equation \ref{eq:minimise_segments},
+can be reformatted into a minimisation problem for a sum of two elements,
+where the first element is the first segment at the beginning of the signal
+and the second element is the optimal set of segments for the rest of the signal.
+%a segment with no subsegments from the very beginning of the signal
+Analogously, the second element can be expressed as the minimised sum of its first segment and the optimal set of segments for the rest of the signal, and so forth. 
+%Last segment could also be picked instead of the first one.
+
 % commercials
-As menitioned in section \ref{subsec:methods}, advertisement breaks in the recording may produce recesses in the viewer count and thus appear as change points. The number of advertisement breaks per program varies, meaning that $k$ is unknown if the recording might contain advertisement breaks. However, programs in noncommercial channels never contain advertisements, and for them it can be assumed that there should be exactly one change point at the beginning and one at the end of the program. This implies that \texttt{Opt} should be a viable search method for recordings from non-commercial channels with $k=2$.
+As mentioned in section \ref{subsec:methods}, advertisement breaks in the recording may produce recesses in the viewer count and thus appear as change points. The number of advertisement breaks per program varies, meaning that $K$ is unknown if the recording might contain advertisement breaks. However, programs in noncommercial channels never contain advertisements, and for them it can be assumed that there should be exactly one change point at the beginning and one at the end of the program. This implies that \texttt{Opt} should be a viable search method for recordings from non-commercial channels with $K=2$.
 % TODO: consider explaining 'noncommercial means k=2' in one place
 % TODO: mention dynamic programming for opt?
-The \texttt{Opt} algorithm for $k = 2$ proceeds as follows: %for this use case
+The \texttt{Opt} algorithm follows equation \ref{eq:dynp} and proceeds as follows for $K = 2$: %for this use case
 \begin{enumerate}
-  \item For every possible subsample of the signal, calculate $C_1$, that is the value of homogenuity within that subsection with the chosen cost fuction.
-  \item For every possible subsample of the signal that is long enough, calculate $C_2$, that is the two $C_1$ that cover the entire subsample and minimise the cost function.
-  \item Divide the signal in two so that the cost function is minimised by the sum of $C_2$ of the first section and $C_1$ of the second section. 
+  \item For every possible subsample of the signal, calculate $C_1$, which is the value of homogenuity within that subsection with the chosen cost fuction.
+  \item For every possible subsample of the signal that has at least two values, calculate $C_2$, which is the two $C_1$ that cover the entire subsample and minimise the cost function.
+  \item Divide the signal in two so that the cost function is minimised by the sum of $C_1$ of the first section and $C_2$ of the second section. 
 \end{enumerate}
-
 A more thorough pseudocode for the algorithm is available in Truong et al. literature review \cite{truongSelectiveReviewOffline2020}.
 % TODO: how opt works differently when k > 2
+
+In principle, finding the optimal set of change points works similarly when $K$ is unknown. It would be possible to choose a sufficiently large maximum value $K=K_{\text{max}}$ and iterate \texttt{Opt} for all $K=1\text{, ..., }K_{\text{max}}$ and choose the result which produced the best minimisation. However, the computational complexity of this method is very high. A more viable solution is to add a complexity penalty term into equation \ref{eq:minimise_segments} to restrict the number of predicted change points. With the complexity penalty $\beta$ equation \ref{eq:minimise_segments} becomes:
+\begin{equation} % 
+  \sum_{k=0}^{K} \left[ c(y_{ (t_k . t_{k+1} )}) + \beta \right]
+  \label{eq:minimise_segments_pen}
+\end{equation}
+When $\beta$ is linear the \texttt{Pelt} algorithm can be used. In principle, it follows the dynamic programming approach of equation \ref{eq:dynp}, but there is a pruning rule which discards some indices which cannot be change points, reducing the computational complexity. % of the method
+%TODO: exact computational complexity
+%TODO: explain pruning rule in more detail
+%TODO: explain different penalties
 
 \begin{comment}
   The basic principle for \texttt{Opt} with the number of change points being $k=2$ is the following.
@@ -234,6 +279,11 @@ A more thorough pseudocode for the algorithm is available in Truong et al. liter
 \end{comment}
 
 % TODO: pelt
+% Linearly penalized segmentation, pruned exact linear time
+% minimisation of a penalised cost function using dynamic programming
+% huom, ruptures dokumentaatiossa sanotaan et l2 on huomattavasti nopeempi kuin monet muut cost functionit peltille
+% opt aikakompleksisuus on O(n)
+% pelt aikakompleksisuus on yleensä O(n) (nimi tulee siitä), worst case 
 
 % TODO: prioritize theoretical section 
 % TODO: check if median is not that good because there aren't that many outliers
