@@ -63,45 +63,45 @@
 \DeclareOption{second=orange}{\definecolor{secondarycolor}{named}{aaltoorange}}
 % Logo
 \DeclareOption{logo=yellowexc}{%
-  \renewcommand{\largelogo}{\includegraphics[height=\largelogoheight]{Aalto_EN_ScienceandTech_21_RGB_y1}}
-  \renewcommand{\smalllogo}{\includegraphics[height=\smalllogoheight]{Aalto_EN_ScienceandTech_13_RGB_y1}}
+  \renewcommand{\largelogo}{\includegraphics[height=\largelogoheight]{logos/Aalto_EN_ScienceandTech_21_RGB_y1}}
+  \renewcommand{\smalllogo}{\includegraphics[height=\smalllogoheight]{logos/Aalto_EN_ScienceandTech_13_RGB_y1}}
 }
 % ** Jukka testaa käsin tänne...
 \DeclareOption{logo=keltainenHuuto}{%
-  \renewcommand{\largelogo}{\includegraphics[height=\largelogoheight]{AaltoSCI_FI_8}}
-  \renewcommand{\smalllogo}{\includegraphics[height=\smalllogoheight]{AaltoSCI_FI_9}}
+  \renewcommand{\largelogo}{\includegraphics[height=\largelogoheight]{logos/AaltoSCI_FI_8}}
+  \renewcommand{\smalllogo}{\includegraphics[height=\smalllogoheight]{logos/AaltoSCI_FI_9}}
 }
 \DeclareOption{logo=yellowquo}{%
-  \renewcommand{\largelogo}{\includegraphics[height=\largelogoheight]{Aalto_EN_ScienceandTech_21_RGB_y2}}
-  \renewcommand{\smalllogo}{\includegraphics[height=\smalllogoheight]{Aalto_EN_ScienceandTech_13_RGB_y2}}
+  \renewcommand{\largelogo}{\includegraphics[height=\largelogoheight]{logos/Aalto_EN_ScienceandTech_21_RGB_y2}}
+  \renewcommand{\smalllogo}{\includegraphics[height=\smalllogoheight]{logos/Aalto_EN_ScienceandTech_13_RGB_y2}}
 }
 \DeclareOption{logo=yellowque}{%
-  \renewcommand{\largelogo}{\includegraphics[height=\largelogoheight]{Aalto_EN_ScienceandTech_21_RGB_y3}}
-  \renewcommand{\smalllogo}{\includegraphics[height=\smalllogoheight]{Aalto_EN_ScienceandTech_13_RGB_y3}}
+  \renewcommand{\largelogo}{\includegraphics[height=\largelogoheight]{logos/Aalto_EN_ScienceandTech_21_RGB_y3}}
+  \renewcommand{\smalllogo}{\includegraphics[height=\smalllogoheight]{logos/Aalto_EN_ScienceandTech_13_RGB_y3}}
 }
 \DeclareOption{logo=redexc}{%
-  \renewcommand{\largelogo}{\includegraphics[height=\largelogoheight]{Aalto_EN_ScienceandTech_21_RGB_r1}}
-  \renewcommand{\smalllogo}{\includegraphics[height=\smalllogoheight]{Aalto_EN_ScienceandTech_13_RGB_r1}}
+  \renewcommand{\largelogo}{\includegraphics[height=\largelogoheight]{logos/Aalto_EN_ScienceandTech_21_RGB_r1}}
+  \renewcommand{\smalllogo}{\includegraphics[height=\smalllogoheight]{logos/Aalto_EN_ScienceandTech_13_RGB_r1}}
 }
 \DeclareOption{logo=redquo}{%
-  \renewcommand{\largelogo}{\includegraphics[height=\largelogoheight]{Aalto_EN_ScienceandTech_21_RGB_r2}}
-  \renewcommand{\smalllogo}{\includegraphics[height=\smalllogoheight]{Aalto_EN_ScienceandTech_13_RGB_r2}}
+  \renewcommand{\largelogo}{\includegraphics[height=\largelogoheight]{logos/Aalto_EN_ScienceandTech_21_RGB_r2}}
+  \renewcommand{\smalllogo}{\includegraphics[height=\smalllogoheight]{logos/Aalto_EN_ScienceandTech_13_RGB_r2}}
 }
 \DeclareOption{logo=redque}{%
-  \renewcommand{\largelogo}{\includegraphics[height=\largelogoheight]{Aalto_EN_ScienceandTech_21_RGB_r3}}
-  \renewcommand{\smalllogo}{\includegraphics[height=\smalllogoheight]{Aalto_EN_ScienceandTech_13_RGB_r3}}
+  \renewcommand{\largelogo}{\includegraphics[height=\largelogoheight]{logos/Aalto_EN_ScienceandTech_21_RGB_r3}}
+  \renewcommand{\smalllogo}{\includegraphics[height=\smalllogoheight]{logos/Aalto_EN_ScienceandTech_13_RGB_r3}}
 }
 \DeclareOption{logo=blueexc}{%
-  \renewcommand{\largelogo}{\includegraphics[height=\largelogoheight]{Aalto_EN_ScienceandTech_21_RGB_b1}}
-  \renewcommand{\smalllogo}{\includegraphics[height=\smalllogoheight]{Aalto_EN_ScienceandTech_13_RGB_b1}}
+  \renewcommand{\largelogo}{\includegraphics[height=\largelogoheight]{logos/Aalto_EN_ScienceandTech_21_RGB_b1}}
+  \renewcommand{\smalllogo}{\includegraphics[height=\smalllogoheight]{logos/Aalto_EN_ScienceandTech_13_RGB_b1}}
 }
 \DeclareOption{logo=bluequo}{%
-  \renewcommand{\largelogo}{\includegraphics[height=\largelogoheight]{Aalto_EN_ScienceandTech_21_RGB_b2}}
-  \renewcommand{\smalllogo}{\includegraphics[height=\smalllogoheight]{Aalto_EN_ScienceandTech_13_RGB_b2}}
+  \renewcommand{\largelogo}{\includegraphics[height=\largelogoheight]{logos/Aalto_EN_ScienceandTech_21_RGB_b2}}
+  \renewcommand{\smalllogo}{\includegraphics[height=\smalllogoheight]{logos/Aalto_EN_ScienceandTech_13_RGB_b2}}
 }
 \DeclareOption{logo=blueque}{%
-  \renewcommand{\largelogo}{\includegraphics[height=\largelogoheight]{Aalto_EN_ScienceandTech_21_RGB_b3}}
-  \renewcommand{\smalllogo}{\includegraphics[height=\smalllogoheight]{Aalto_EN_ScienceandTech_13_RGB_b3}}
+  \renewcommand{\largelogo}{\includegraphics[height=\largelogoheight]{logos/Aalto_EN_ScienceandTech_21_RGB_b3}}
+  \renewcommand{\smalllogo}{\includegraphics[height=\smalllogoheight]{logos/Aalto_EN_ScienceandTech_13_RGB_b3}}
 }
 % Other options
 \DeclareOption{nofoot}{\footerfalse}
