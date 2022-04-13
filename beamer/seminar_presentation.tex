@@ -16,13 +16,14 @@
 \author[S. Kivistö]{Saskia Kivistö}
 %\institute[ICS]{Department of Computer Science\\
 %Aalto University, School of Science \\saskia.kivisto@aalto.fi}
-\institute[ICS]{Puhepaja 2}
+\institute[ICS]{Bachelor's thesis presentation}
 
-\aaltofootertext{Puhepaja 2}{April 5, 2022}{\insertframenumber/\inserttotalframenumber}
+\aaltofootertext{Bachelor's thesis presentation}{April 14, 2022}{\insertframenumber/\inserttotalframenumber}
 
-\date{April 5, 2022}
+\date{April 14, 2022}
 
 \begin{document}
+%TODO: why user behaviour data?
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -55,50 +56,42 @@
 \begin{frame}{1. Introduction}
     \begin{block}{{\color{black}The issue with recording TV programs:}}
         \begin{itemize}
-            \item TV programs are not usually broadcasted exactly according to EPG
+            \item TV programs are not usually broadcasted exactly according to electronic program guide (EPG)
             \item Timing recording by EPG can lead to program being recorded only partially
             \item Buffer can be added to ensure that whole program is recorded
+            \item Example recording of 10 o'clock news:
         \end{itemize}
+        \center
+        \includegraphics[width=1\textwidth]{figures/recording0.pdf}
     \end{block}
 \end{frame}
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}{1. Introduction}
-    \includegraphics[width=1\textwidth]{figures/recording0.pdf}
+    \begin{block}{{\color{black}The issue with recording TV programs:}}
+        \begin{itemize}
+            \item TV programs are not usually broadcasted exactly according to electronic program guide (EPG)
+            \item Timing recording by EPG can lead to program being recorded only partially
+            \item Buffer can be added to ensure that whole program is recorded
+            \item Example recording of 10 o'clock news:
+        \end{itemize}
+        \center
+        \includegraphics[width=1\textwidth]{figures/recording1.pdf}
+    \end{block}
 \end{frame}
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}{1. Introduction}
-    \includegraphics[width=1\textwidth]{figures/recording1.pdf}
-\end{frame}
-        
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\begin{frame}{1. Introduction}
-    \includegraphics[width=1\textwidth]{figures/recording2.pdf}
-\end{frame}
-    
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\begin{frame}{1. Introduction}
-    \includegraphics[width=1\textwidth]{figures/recording2.pdf}
-    \begin{itemize}
-        \item Goal: identify extra content
-    \end{itemize}
-\end{frame}
-    
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\begin{frame}{1. Introduction}
-    \includegraphics[width=1\textwidth]{figures/recording2.pdf}
-    \begin{itemize}
-        \item Goal: identify extra content
-        \item Why?
-            \SubItem{Its annoying to fast forward over extra content}
-            \SubItem{Extra content consumes storage space}
-    \end{itemize}
+    \begin{block}{{\color{black}}}
+        \begin{itemize}
+            \item Goal: identify surplus content
+            \item Why?
+                \SubItem{Its annoying to fast forward over surplus content}
+                \SubItem{Surplus content consumes storage space}
+        \end{itemize}
+    \end{block}
 \end{frame}
         
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -129,10 +122,11 @@
 \begin{frame}{2. User viewing behaviour data}
     \begin{block}{{\color{black}\alert{Why} is the data collected?}}
         \begin{itemize}
-            \item monitoring the popularity of programs
-            \item monitoring the user experience quality
+            %\item monitoring the popularity of programs
+            \item To monitor the user experience quality
                 \SubItem{smoothness of streaming etc.}
-                \SubItem{with data related to the above, \alert{it can be calculated which parts of a recording were watched during a view, and which parts were fast forwarded}}
+                \SubItem{with data related to the above, 
+                it can be calculated \color{orange}{which parts of a recording were watched during a view, and which parts were fast forwarded}}
         \end{itemize}
     \end{block}
 \end{frame}
@@ -142,9 +136,12 @@
 \begin{frame}{2. User viewing behaviour data}
     \begin{block}{{\color{black}\alert{What} the examined data actually is?}}
         \begin{itemize}
-            \item For each view of any recording:
-                \SubItem{\alert{it can be calculated which parts of a recording were watched during a view, and which parts were fast forwarded}}
-            \item The data examined in the thesis is an aggregation of the above
+            \item For each view of any recording, it can be calculated
+                \\ {\color{orange}{which parts of the recording were watched during a view, and which parts were fast forwarded}}
+            \item Users who record the same program will receive an identical recording
+            \item \alert{User viewing behaviour data}:
+            sum of viewed parts for recordings of the same program
+            %aggregations of the views of a same program 
         \end{itemize}
     \end{block}
 \end{frame}
@@ -152,17 +149,11 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}{2. User viewing behaviour data}
-    \begin{block}{{\color{black}An example of the aggregated data}}
-        \includegraphics[width=1\textwidth]{figures/data0.pdf}
-    \end{block}
-\end{frame}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\begin{frame}{2. User viewing behaviour data}
-    \begin{block}{{\color{black}An example of the aggregated data}}
+    \begin{block}{{\color{black}An example of the data}}
+        \center
         \includegraphics[width=1\textwidth]{figures/data1.pdf}
         \begin{itemize}
-            \item Could creidts be detected solely with this data?
+            \item Could credits be detected solely with this data?
         \end{itemize}
     \end{block}
 \end{frame}
@@ -181,12 +172,11 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}{3. Problem formulation and methods}
-    \begin{block}{{\color{black}Problem formulation}}
+    \begin{block}{{\color{black}An example of the data}}
+        \center
+        \includegraphics[width=1\textwidth]{figures/data1.pdf}
         \begin{itemize}
-            \item Signal processing, offline change point detection %(segmentation)
-            \item Minimisation problem for the sum of costs of each segment (segments are divided by change points)
-                \SubItem{cost function}
-                \SubItem{search method}
+            \item Goal: try to find approximate location of credits
         \end{itemize}
     \end{block}
 \end{frame}
@@ -194,11 +184,42 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}{3. Problem formulation and methods}
-    \begin{block}{{\color{black}Methods}}
+    \begin{block}{{\color{black}Problem formulation}}
+        \begin{itemize}
+            \item Signal processing, offline change point detection %(segmentation)
+            \item Minimisation problem for the sum of costs of each segment (segments are divided by change points)
+                \SubItem{cost function}
+                \SubItem{search method}
+            \item Python scientific library \texttt{ruptures} implements the above [1]
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{3. Problem formulation and methods}
+    \begin{block}{ {\color{black}Cost function} {\color{white}-----------------------------} {\color{white}Search method}}
+        \includegraphics[width=0.49\textwidth]{figures/costfunction.pdf}
+        \includegraphics[width=0.49\textwidth]{figures/searchmethod_invisible.pdf}\\
+        \vspace{-1cm} \hspace{0.5cm}
+        \color{orange}{$\sigma^2=2,7$}
         \begin{itemize}
             \item \alert{cost function}: variance, detects distribution mean shifts well
-            \item \alert{search method}; dynamic programming, produces optimal segmentation
-            \item Python scientific library \texttt{ruptures} implements the above
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{3. Problem formulation and methods}
+    \begin{block}{ {\color{black}Cost function} {\color{white}-----------------------------} {\color{black}Search method}}
+        \includegraphics[width=0.49\textwidth]{figures/costfunction.pdf}
+        \includegraphics[width=0.49\textwidth]{figures/searchmethod.pdf}\\
+        \vspace{-1cm} \hspace{0.5cm}
+        \color{orange}{$\sigma^2=2,7$}
+        \begin{itemize}
+            \item \alert{cost function}: variance, detects distribution mean shifts well
+            \item \alert{search method}: dynamic programming, produces optimal segmentation
         \end{itemize}
     \end{block}
 \end{frame}
@@ -218,14 +239,7 @@
 
 \begin{frame}{4. Results}
     \begin{block}{{\color{black}Typical output}}
-        \includegraphics[width=1\textwidth]{figures/output0.pdf}
-    \end{block}
-\end{frame}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\begin{frame}{4. Results}
-    \begin{block}{{\color{black}Typical output}}
+        \center
         \includegraphics[width=1\textwidth]{figures/output1.pdf}
     \end{block}
 \end{frame}
@@ -234,31 +248,8 @@
 
 \begin{frame}{4. Results}
     \begin{block}{{\color{black}Predicted change point distance from closing credits start}}
+        \center
         \includegraphics[width=0.7\textwidth]{figures/result_absolute0.pdf}
-    \end{block}
-\end{frame}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\begin{frame}{4. Results}
-    \begin{block}{{\color{black}Predicted change point distance from closing credits start}}
-        \includegraphics[width=0.7\textwidth]{figures/result_absolute1.pdf}
-    \end{block}
-\end{frame}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\begin{frame}{4. Results}
-    \begin{block}{{\color{black}Change point position relative to closing credits}}
-        \includegraphics[width=0.6\textwidth]{figures/result_relative0.pdf}
-    \end{block}
-\end{frame}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\begin{frame}{4. Results}
-    \begin{block}{{\color{black}Change point position relative to closing credits}}
-        \includegraphics[width=0.6\textwidth]{figures/result_relative1.pdf}
     \end{block}
 \end{frame}
 
@@ -275,9 +266,12 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{frame}{}
-    \center
-    \bfseries \Huge \color{aaltoorange} Thank you!
+\begin{frame}{Thank you!}
+    %\center
+    %\bfseries \Huge \color{aaltoorange} Thank you!
+    \begin{block}{References}
+        [1] Truong, C. \& Oudre, L. \& Vayatis, N. Selective review of offline change point detection methods. Signal Processing. 2020, vol. 167. P. 107299. Available at: doi:10.1016/j.sigpro.2019.107299.
+    \end{block}
 \end{frame}
 
 \end{document}
