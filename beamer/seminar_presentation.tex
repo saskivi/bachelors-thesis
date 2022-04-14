@@ -14,8 +14,6 @@
 \title{Utilisation of viewing statistics in video recording credits detection}
 
 \author[S. Kivistö]{Saskia Kivistö}
-%\institute[ICS]{Department of Computer Science\\
-%Aalto University, School of Science \\saskia.kivisto@aalto.fi}
 \institute[ICS]{Bachelor's thesis presentation}
 
 \aaltofootertext{Bachelor's thesis presentation}{April 14, 2022}{\insertframenumber/\inserttotalframenumber}
@@ -23,7 +21,6 @@
 \date{April 14, 2022}
 
 \begin{document}
-%TODO: why user behaviour data?
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -43,11 +40,11 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}{1. Introduction}
-    \begin{block}{{\color{black}Goal of this thesis:}}
-        \begin{itemize}
+    \begin{block}{{Problem {\color{black}\&} \alert{Solution }}}
+        \begin{enumerate}
         \item Detect where recorded TV programs actually start and end
-        \item by analysing patterns of user viewing behaviour
-        \end{itemize}
+        \alert{\item {\color{black}by analysing patterns of user viewing behaviour}}
+        \end{enumerate}
     \end{block}
 \end{frame}
 
@@ -108,6 +105,18 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}{2. User viewing behaviour data}
+    \begin{block}{{\color{black}Watched seconds of 100 views of a 37 min recording}}
+        \center
+        \includegraphics[width=1\textwidth]{figures/data1.pdf}
+        \begin{itemize}
+            \item Could credits be detected solely with this data?
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{2. User viewing behaviour data}
     \begin{block}{{\color{black}\alert{Where} does the user behaviour data come from?}}
         \begin{itemize}
             \item The NPVR service provider company I am working for
@@ -122,7 +131,6 @@
 \begin{frame}{2. User viewing behaviour data}
     \begin{block}{{\color{black}\alert{Why} is the data collected?}}
         \begin{itemize}
-            %\item monitoring the popularity of programs
             \item To monitor the user experience quality
                 \SubItem{smoothness of streaming etc.}
                 \SubItem{with data related to the above, 
@@ -141,7 +149,6 @@
             \item Users who record the same program will receive an identical recording
             \item \alert{User viewing behaviour data}:
             sum of viewed parts for recordings of the same program
-            %aggregations of the views of a same program 
         \end{itemize}
     \end{block}
 \end{frame}
@@ -149,7 +156,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}{2. User viewing behaviour data}
-    \begin{block}{{\color{black}An example of the data}}
+    \begin{block}{{\color{black}Watched seconds of 100 views of a 37 min recording}}
         \center
         \includegraphics[width=1\textwidth]{figures/data1.pdf}
         \begin{itemize}
@@ -172,11 +179,12 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}{3. Problem formulation and methods}
-    \begin{block}{{\color{black}An example of the data}}
+    \begin{block}{{\color{black}Goal and hypothesis}}
         \center
-        \includegraphics[width=1\textwidth]{figures/data1.pdf}
+        \includegraphics[width=.95\textwidth]{../plots/sitcom.pdf}
         \begin{itemize}
-            \item Goal: try to find approximate location of credits
+            \item Goal: \\identify where the viewer count changes drastically
+            \item Hypothesis: \\major viewer count changes happen during the credits
         \end{itemize}
     \end{block}
 \end{frame}
@@ -186,7 +194,7 @@
 \begin{frame}{3. Problem formulation and methods}
     \begin{block}{{\color{black}Problem formulation}}
         \begin{itemize}
-            \item Signal processing, offline change point detection %(segmentation)
+            \item Signal processing, offline change point detection
             \item Minimisation problem for the sum of costs of each segment (segments are divided by change points)
                 \SubItem{cost function}
                 \SubItem{search method}
@@ -202,7 +210,7 @@
         \includegraphics[width=0.49\textwidth]{figures/costfunction.pdf}
         \includegraphics[width=0.49\textwidth]{figures/searchmethod_invisible.pdf}\\
         \vspace{-1cm} \hspace{0.5cm}
-        \color{orange}{$\sigma^2=2,7$}
+        \color{orange}{$\sigma^2=2.7$}
         \begin{itemize}
             \item \alert{cost function}: variance, detects distribution mean shifts well
         \end{itemize}
@@ -216,7 +224,7 @@
         \includegraphics[width=0.49\textwidth]{figures/costfunction.pdf}
         \includegraphics[width=0.49\textwidth]{figures/searchmethod.pdf}\\
         \vspace{-1cm} \hspace{0.5cm}
-        \color{orange}{$\sigma^2=2,7$}
+        \color{orange}{$\sigma^2=2.7$}
         \begin{itemize}
             \item \alert{cost function}: variance, detects distribution mean shifts well
             \item \alert{search method}: dynamic programming, produces optimal segmentation
@@ -261,14 +269,17 @@
             \item {\color{aaltoorange}{Yes}}, for approximate location of credits
             \item {\color{aaltoorange}{No}}, for exact start or end of credits
         \end{itemize}
+        \vspace{0.5cm}
+        More precise credits detection could perhaps be done by combining this with other methods
+        \begin{itemize}
+            \item For example optical characrer recognition (OCR), that identifies text in images
+        \end{itemize}
     \end{block}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}{Thank you!}
-    %\center
-    %\bfseries \Huge \color{aaltoorange} Thank you!
     \begin{block}{References}
         [1] Truong, C. \& Oudre, L. \& Vayatis, N. Selective review of offline change point detection methods. Signal Processing. 2020, vol. 167. P. 107299. Available at: doi:10.1016/j.sigpro.2019.107299.
     \end{block}
