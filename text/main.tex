@@ -1,7 +1,7 @@
 % ---------------------------------------------------------------------
 % -------------- PREAMBLE ---------------------------------------------
 % ---------------------------------------------------------------------
-\documentclass[12pt,a4paper,finnish,oneside]{article}
+\documentclass[12pt,a4paper,english,oneside]{article}
 %\documentclass[12pt,a4paper,finnish,twoside]{article}
 %\documentclass[12pt,a4paper,finnish,oneside,draft]{article} % luonnos, nopeampi
 
@@ -28,11 +28,15 @@
 \usepackage{supertabular,array}  % useampisivuinen taulukko
 % linkit tiedoston sisällä
 \usepackage{hyperref}
-\hypersetup{colorlinks=true,urlcolor=red,linkcolor=black,citecolor=black}
+\hypersetup{colorlinks=true,urlcolor=black,linkcolor=black,citecolor=black}
 
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage{verbatim} % comment block
+
+\DeclareMathOperator{\OPT}{OPT}
+\DeclareMathOperator{\cost}{cost}
+\DeclareMathOperator{\pen}{pen}
 
 % Koko dokumentin kattavia asetuksia:
 
@@ -109,7 +113,7 @@
 %\title{\LaTeX{}-pohja kandidaatintyölle \\[5mm] Pitkiä rivejä kokeilun vuoksi.}
 
 % Otsikko tiivistelmään. Jos lisäksi engl. tiivistelmä, niin viimeisin:
-\TITLE{Videotallenteen alku- ja lopputekstien paikannus\\ katsomistilastojen perusteella}
+\TITLE{Videonauhoitteiden alku- ja lopputekstien paikannus\\ katsomistilastojen perusteella}
 %\TITLE{\LaTeX{} för kandidatseminariet med jättelång rubrik som fortsätter och
 % fortsätter ännu}
 \ENTITLE{Utilisation of viewing statistics in video recording credits detection}
@@ -122,8 +126,8 @@
 
 % Vuosi ja päivämäärä, jolloin työ on jätetty tarkistettavaksi.
 \YEAR{2022}
-\DATE{17. huhtikuuta 2022}
-\ENDATE{April 17, 2022}
+\DATE{\today}
+\ENDATE{\today}
 
 % Kurssin vastuuopettaja ja työsi ohjaaja(t)
 \SUPERVISOR{Apulaisprofessori Parinya Chalermsook}
@@ -153,8 +157,8 @@
 
 % Avainsanat tiivistelmään. Tarvittaessa myös englanniksi:
 
-\KEYWORDS{muutospisteiden havaitseminen, segmentaatio,\\ tilastollinen signaalinkäsittely, NVPR}
-\ENKEYWORDS{change point detection, segmentation,\\ statistical signal processing, NVPR}
+\KEYWORDS{muutospisteiden havaitseminen, segmentaatio,\\ tilastollinen signaalinkäsittely, NPVR, käyttäytymisanalytiikka}
+\ENKEYWORDS{change point detection, segmentation,\\ statistical signal processing, NPVR, behavioural analytics}
 
 % Tiivistelmään tulee opinnäytteen sivumäärä.
 % Kirjoita lopulliset sivumäärät käsin tai kokeile koodia. 
@@ -172,7 +176,7 @@
 % VANHA //  sivunumerolla 1. %   Toisin sanoen, viimeisen lähdeluettelosivun 
 % VANHA //  sivunumero EI ole sivujen määrä vaan se pitää laskea tähän käsin
 
-\PAGES{}
+\PAGES{27} %TODO: tähän kokonaissivumäärä
 %\PAGES{23}  % kaikki sivut laskettuna nimiölehdestä lähdeluettelon tai 
              % mahdollisten liitteiden loppuun. Tässä 23 sivua
 

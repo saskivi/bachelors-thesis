@@ -6,21 +6,35 @@
 % Avainsanojen lista pitää merkitä main.tex-tiedoston kohtaan \KEYWORDS.
 
 \begin{enabstract}
-Abstract
+
+The goal of this thesis was to study whether it is possible to use user viewing behaviour statistics to distinguish program content from surplus content from television broadcasts, which have been recorded with a network personal video recorder. Recorded television programs tend to include surplus content, since programs are not broadcast strictly according to the electronic program guide. In order to ensure that the entire program is recorded, recording must start a few minutes earlier and end a few minutes later than what is stated as the programs broadcast time in the electronic program guide. The incentive for identifying surplus content is that it consumes storage space, and fast forwarding over it is tedious for the person watching the recording.
+
+The research question was treated as a signal processing problem for offline change point detection, more specifically as a minimisation problem for the sum of costs of segments. %The homogeneity of possible segments was measured with a cost function of least squares deviation, and the optimal segmentation was computed with dynamic programming. % two different dynamic programming methods
+The optimal segmentation was computed with dynamic programming, using least squares deviation as the cost function.
+
+The position of opening and closing credits was correctly identified for most of the recordings in the sample of 279 recordings. The last change point was typically within a few seconds from the beginning of closing credits, but for recordings with program content during the closing credits, the last change point was predicted closer to the end of closing credits. There was more variance in the position of the first change point within opening credits.
+
+The precise start and end time of program content could not be detected solely with user viewing behaviour statistics, but the data could be useful for more precise detection combined with other analytics and information about the typical program structure.
+
 \end{enabstract}
 
 \begin{fiabstract}
 
+%TODO: aikamuodot
+%TODO: englanninkieliset termit mukaan sulkuihin
+
 % (1) aihe, tavoite ja rajaus (heti alkuun, selkeästi ja napakasti, ei johdattelua)
-Tässä kandidaatintyössä tutkitaan onko katsomiskäyttäytymistilastojen avulla mahdollista erottaa ohjelmasisältö ylimääräisestä sisällöstä televisiolähetyksissä, jotka on nauhoitettu verkkopohjaisella digitaalisella mediatallentimella. Nauhoitteiden alkuun ja loppuun jää ylimääräistä sisältöä, koska nauhoituksen tallennusaika on muutaman minuutin pidempi kuin ohjelman ohjelmaoppaan mukainen kesto. Tällä varmistetaan että ohjelma tallentuu kokonaisuudessaan, vaikka sen lähetysaika poikkeaisikin hieman ohjelmaoppaasta.
+%kommentti: Tässä käydään asiaan hyvin nopeasti, eikä lukija välttämättä tajua, mistä tutkimuksessa on kyse. Asiaa voisi avata ehkä hieman rauhallisemmin.
+Tässä kandidaatintyössä tutkittiin, onko katsomiskäyttäytymistilastojen avulla mahdollista erottaa ohjelmasisältö ylimääräisestä sisällöstä televisiolähetyksissä, jotka on nauhoitettu verkkopohjaisella digitaalisella mediatallentimella (engl. network personal video recorder). Nauhoitteiden alkuun ja loppuun jää ylimääräistä sisältöä, koska nauhoituksen tallennusaika on muutaman minuutin pidempi kuin ohjelman ohjelmaoppaan mukainen kesto. Tällä varmistetaan, että ohjelma tallentuu kokonaisuudessaan, vaikka sen lähetysaika poikkeaisikin hieman ohjelmaoppaasta.
 Kannuste ylimääräisen sisällön tunnistamiselle on, että se vie tallennustilaa ja sen ohi kelaaminen on puuduttavaa.
 
 % (2) aineisto ja menetelmät (erittäin lyhyesti)
-Tutkimuskysymystä lähestytään signaalinkäsittelyn kautta segmentiointiongelmana. Mahdollisten segmenttien homogeenisyyttä mitataan neliöllisellä tappiofunktiolla. 
-Tappiofunktion minimoivan segmenttiyhdistelmän laskemiseen sovelletaan kahta algoritmia, joista ensimmäinen löytää optimaalisen ratkaisun kun segmenttien määrä on määritelty ennalta ja toinen kun segmenttien määrä ei ole tiedossa.
+Tutkimuskysymystä lähestyttiin signaalinkäsittelyn kautta signaalin segmentiointiongelmana. Mahdollisten segmenttien homogeenisyyttä mitattiin neliöllisellä tappiofunktiolla. 
+Tappiofunktion minimoivan segmenttiyhdistelmän laskemiseen sovellettiin kahta algoritmia, joista ensimmäinen löytää optimaalisen ratkaisun, kun segmenttien määrä on määritelty ennalta, ja toinen, kun segmenttien määrä ei ole tiedossa.
 
 % (3) tulokset (tälle enemmän painoarvoa)
-Alku- ja lopputekstien sijainti löytyy oikein suurimmassa osassa 279 tallenteen otoksesta. Lopun muutoskohta paikantuu tyypillisesti muutaman sekunnin päähän lopputekstien alkukohdasta, mutta jos lopputekstien aikana tai päätteeksi on vielä varsinaista ohjelmasisältöä muutoskohta paikantuu lähemmäs lopputekstien loppua. Alun muutoskohdan sijainnissa alkutekstien sisällä on enemmän vaihtelua.
+%kommentti: Lisää tähän metatekstiä: Tutkimuksessa alku- ja lopputekstien...
+Alku- ja lopputekstien sijainti löytyi oikein suurimmassa osassa 279 tallenteen otoksesta. Lopun muutoskohta paikantui tyypillisesti muutaman sekunnin päähän lopputekstien alkukohdasta, mutta jos lopputekstien aikana tai päätteeksi oli vielä varsinaista ohjelmasisältöä, muutoskohta paikantui lähemmäs lopputekstien loppua. Alun muutoskohdan sijainnissa alkutekstien sisällä oli enemmän vaihtelua.
 
 % (4) johtopäätökset (tälle enemmän painoarvoa)
 Alku- ja lopputekstien tarkkaa alku- ja päätöskohtaa ei pysty määrittämään pelkkien katsomistilastojen avulla. Katsomistilastot voisivat kuitenkin olla hyödyllisiä tarkan alun ja lopun paikantamisessa yhdistettynä muuhun analytiikkaan ja metatietohin ohjelmien tyypillisestä rakenteesta.
